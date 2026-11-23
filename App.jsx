@@ -210,10 +210,10 @@ export default function App() {
     accessory: null
   });
   const [clothingAdjustments, setClothingAdjustments] = useState({
-    top: { y: 0, scale: 1.0 },
-    bottom: { y: 0, scale: 1.0 },
-    outerwear: { y: 0, scale: 1.0 },
-    accessory: { y: 0, scale: 1.0 }
+    top: { y: 0, scale: 1.0, cropHalf: false },
+    bottom: { y: 0, scale: 1.0, cropHalf: false },
+    outerwear: { y: 0, scale: 1.0, cropHalf: false },
+    accessory: { y: 0, scale: 1.0, cropHalf: false }
   });
   const [activeAdjustSlot, setActiveAdjustSlot] = useState('top');
   const [blendModeMultiply, setBlendModeMultiply] = useState(true);
@@ -498,12 +498,22 @@ export default function App() {
 
   const adjustClothing = (slot, deltaY, deltaScale) => {
     setClothingAdjustments((prev) => {
-      const current = prev[slot] || { y: 0, scale: 1.0 };
+      const current = prev[slot] || { y: 0, scale: 1.0, cropHalf: false };
       const newY = Math.max(-40, Math.min(40, current.y + deltaY));
       const newScale = Math.max(0.65, Math.min(1.45, parseFloat((current.scale + deltaScale).toFixed(2))));
       return {
         ...prev,
-        [slot]: { y: newY, scale: newScale }
+        [slot]: { ...current, y: newY, scale: newScale }
+      };
+    });
+  };
+
+  const toggleCropHalf = (slot) => {
+    setClothingAdjustments((prev) => {
+      const current = prev[slot] || { y: 0, scale: 1.0, cropHalf: false };
+      return {
+        ...prev,
+        [slot]: { ...current, cropHalf: !current.cropHalf }
       };
     });
   };
@@ -511,7 +521,7 @@ export default function App() {
   const resetAdjustment = (slot) => {
     setClothingAdjustments((prev) => ({
       ...prev,
-      [slot]: { y: 0, scale: 1.0 }
+      [slot]: { y: 0, scale: 1.0, cropHalf: false }
     }));
   };
 
@@ -1178,8 +1188,7 @@ export default function App() {
 
                   {/* Value prop */}
                   <p className="text-stone-600 text-base sm:text-lg max-w-xl leading-relaxed">
-                    Không phải dịch vụ cho thuê trang phục. LoopStyle là nơi mua bán & trao đổi secondhand
-                    chính hãng, được kiểm định, đo đạc và khử khuẩn UV-C trước khi cất vào mạng lưới tủ Drop-box tại campus FTU.
+                    Nền tảng mua bán, trao đổi và cho thuê thời trang secondhand chính hãng, đã kiểm định, đo đạc và khử khuẩn tia cực tím UV-C tại Đại học Ngoại Thương Hà Nội.
                   </p>
 
                   {/* Dual CTA buttons */}
@@ -1672,7 +1681,7 @@ export default function App() {
         )}
 
         {/* ======================================================== */}
-        {/* VIEW 3: 2D OUTFIT BUILDER (REALISTIC AVATARS, EXACT PRODUCT IMAGE OVERLAY & FINE-TUNE CONTROLS) */}
+        {/* VIEW 3: 2D OUTFIT BUILDER (LOOKBOOK CROQUIS MANNEQUINS, AUTO-FIT OVERLAY & FRONT-ONLY CROP) */}
             {activeTab === 'builder2d' && (
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
                 {/* Header */}
@@ -1685,7 +1694,7 @@ export default function App() {
                       Phối Đồ 2D — Thử Trang Phục Thật Lên Người Mẫu
                     </h1>
                     <p className="text-xs sm:text-sm text-stone-600">
-                      Tùy chỉnh vóc dáng cơ thể và khoác trực tiếp hình ảnh trang phục thật lên ma-nơ-canh. Tinh chỉnh vị trí và kích thước để đồ vừa vặn nhất!
+                      Tùy chỉnh vóc dáng và khoác trực tiếp hình ảnh trang phục thật lên người mẫu lookbook. Trang phục tự động co giãn theo số đo cơ thể!
                     </p>
                   </div>
 
@@ -1748,7 +1757,7 @@ export default function App() {
                     <div className="w-full flex items-center justify-between text-xs font-bold text-stone-500 border-b border-stone-100 pb-3">
                       <span className="flex items-center gap-1.5 text-[#283F2E]">
                         <Sparkles className="w-3.5 h-3.5 text-[#5F7A57]" />
-                        <span>Avatar Studio 2D • Lookbook Shaded Model</span>
+                        <span>Fashion Croquis Studio • Người Mẫu Lookbook</span>
                       </span>
                       <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                         {outfitItems.length}/4 món đang mặc
@@ -1835,12 +1844,12 @@ export default function App() {
                     </div>
 
                     {/* 2D AVATAR MANNEQUIN STAGE */}
-                    <div className="relative w-full max-w-[310px] h-[460px] flex items-center justify-center my-1 select-none overflow-hidden rounded-2xl bg-gradient-to-b from-[#F9F0D3]/40 via-white to-[#EFE3B8]/25 border border-stone-200/70 shadow-inner">
+                    <div className="relative w-full max-w-[320px] h-[480px] flex items-center justify-center my-1 select-none overflow-hidden rounded-3xl bg-gradient-to-b from-[#F9F0D3]/40 via-white to-[#EFE3B8]/25 border border-[#283F2E]/15 shadow-inner">
                       {/* Studio Spotlight Glow */}
                       <div className="absolute inset-0 bg-gradient-to-b from-[#EFE3B8]/70 via-[#5F7A57]/15 to-transparent rounded-full blur-2xl -z-10"></div>
 
                       {/* Height Scale Ruler on the Right Side */}
-                      <div className="absolute right-2.5 top-6 bottom-10 flex flex-col justify-between text-[8px] font-mono font-bold text-stone-600 pointer-events-none select-none">
+                      <div className="absolute right-2.5 top-6 bottom-12 flex flex-col justify-between text-[8px] font-mono font-bold text-stone-600 pointer-events-none select-none z-10">
                         <div className="flex items-center gap-1"><span>- 185</span><span className="w-2 h-px bg-stone-300"></span></div>
                         <div className="flex items-center gap-1"><span>- 175</span><span className="w-2 h-px bg-stone-300"></span></div>
                         <div className="flex items-center gap-1"><span>- 165</span><span className="w-3 h-px bg-[#283F2E]/50 font-black text-[#283F2E]"></span></div>
@@ -1848,357 +1857,373 @@ export default function App() {
                         <div className="flex items-center gap-1"><span>- 150</span><span className="w-2 h-px bg-stone-300"></span></div>
                       </div>
 
-                      {/* Scaled Avatar & Realistic Clothes Overlay */}
+                      {/* MANNEQUIN & CLOTHING CANVAS CONTAINER */}
                       {(() => {
                         const bmiNum = avatarWeight / Math.pow(avatarHeight / 100, 2);
                         const scaleY = (0.86 + ((avatarHeight - 150) / 35) * 0.22).toFixed(3);
                         const scaleX = (0.84 + Math.max(0, Math.min(1, (bmiNum - 16) / 14)) * 0.32).toFixed(3);
 
-                        // Fine tune variables
-                        const adjTop = clothingAdjustments.top || { y: 0, scale: 1.0 };
-                        const adjBottom = clothingAdjustments.bottom || { y: 0, scale: 1.0 };
-                        const adjOuter = clothingAdjustments.outerwear || { y: 0, scale: 1.0 };
-                        const adjAcc = clothingAdjustments.accessory || { y: 0, scale: 1.0 };
-
                         return (
-                          <svg className="w-full h-full drop-shadow-md" viewBox="0 0 220 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                              {/* Skin Gradients with Natural Shading */}
-                              <linearGradient id="skinBaseFemaleApp" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#fff7ed" />
-                                <stop offset="35%" stopColor="#fed7aa" />
-                                <stop offset="75%" stopColor="#fdba74" />
-                                <stop offset="100%" stopColor="#f97316" />
-                              </linearGradient>
+                          <div className="relative w-[240px] h-[420px] flex items-center justify-center">
+                            {/* Base Pedestal (Static ground at bottom) */}
+                            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-48 h-7 pointer-events-none">
+                              <svg viewBox="0 0 190 28" className="w-full h-full">
+                                <defs>
+                                  <radialGradient id="pedestalGlowHtmlApp" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stopColor="#5F7A57" stopOpacity="0.45" />
+                                    <stop offset="70%" stopColor="#283F2E" stopOpacity="0.18" />
+                                    <stop offset="100%" stopColor="#283F2E" stopOpacity="0" />
+                                  </radialGradient>
+                                </defs>
+                                <ellipse cx="95" cy="14" rx="80" ry="12" fill="url(#pedestalGlowHtmlApp)" />
+                                <ellipse cx="95" cy="14" rx="60" ry="7" fill="#283F2E" fillOpacity="0.08" stroke="#283F2E" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="4 2" />
+                                <ellipse cx="95" cy="14" rx="40" ry="4" fill="#2B2D2F" fillOpacity="0.18" />
+                              </svg>
+                            </div>
 
-                              <linearGradient id="skinShadowFemaleApp" x1="0" y1="0" x2="1" y2="0">
-                                <stop offset="0%" stopColor="#ea580c" stopOpacity="0.18" />
-                                <stop offset="50%" stopColor="#ea580c" stopOpacity="0" />
-                                <stop offset="100%" stopColor="#ea580c" stopOpacity="0.18" />
-                              </linearGradient>
-
-                              <linearGradient id="skinBaseMaleApp" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#fffbeb" />
-                                <stop offset="30%" stopColor="#fde68a" />
-                                <stop offset="70%" stopColor="#fbbf24" />
-                                <stop offset="100%" stopColor="#d97706" />
-                              </linearGradient>
-
-                              <linearGradient id="hairGradFemaleApp" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#451a03" />
-                                <stop offset="50%" stopColor="#78350f" />
-                                <stop offset="100%" stopColor="#291102" />
-                              </linearGradient>
-
-                              <linearGradient id="hairGradMaleApp" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#334155" />
-                                <stop offset="60%" stopColor="#1e293b" />
-                                <stop offset="100%" stopColor="#0f172a" />
-                              </linearGradient>
-
-                              <linearGradient id="activeUnderwearGradApp" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#334155" />
-                                <stop offset="100%" stopColor="#1e293b" />
-                              </linearGradient>
-
-                              <radialGradient id="stagePedestalGlowApp" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stopColor="#5F7A57" stopOpacity="0.45" />
-                                <stop offset="70%" stopColor="#283F2E" stopOpacity="0.18" />
-                                <stop offset="100%" stopColor="#283F2E" stopOpacity="0" />
-                              </radialGradient>
-
-                              {/* TAILORED CLOTHING CLIPPING PATHS (NATURAL WRAP OVER BODY) */}
-                              {/* Top Torso Clip Path */}
-                              <clipPath id="topTorsoMaskApp">
-                                <path d="M 94 72 Q 110 82 126 72 L 148 78 L 158 136 L 142 140 L 136 100 L 134 154 Q 110 158 86 154 L 84 100 L 78 140 L 62 136 L 72 78 Z" />
-                              </clipPath>
-
-                              {/* Bottom Pants/Skirt Clip Path */}
-                              <clipPath id="bottomLegsMaskApp">
-                                <path d="M 84 136 Q 110 140 136 136 L 146 172 L 136 354 L 120 354 L 126 254 L 110 184 L 94 254 L 100 354 L 84 354 L 74 172 Z" />
-                              </clipPath>
-
-                              {/* Outerwear Jacket Clip Path */}
-                              <clipPath id="outerwearJacketMaskApp">
-                                <path d="M 88 68 Q 110 74 132 68 L 158 74 L 168 152 L 150 156 L 144 110 L 146 172 Q 110 176 74 172 L 76 110 L 70 156 L 52 152 L 62 74 Z" />
-                              </clipPath>
-
-                              {/* Accessory Bag Clip Path */}
-                              <clipPath id="accessoryBagMaskApp">
-                                <rect x="24" y="170" width="60" height="70" rx="8" />
-                              </clipPath>
-                            </defs>
-
-                            {/* Base Pedestal (Static ground at y=372) */}
-                            <ellipse cx="110" cy="372" rx="74" ry="14" fill="url(#stagePedestalGlowApp)" />
-                            <ellipse cx="110" cy="372" rx="58" ry="8.5" fill="#283F2E" fillOpacity="0.08" stroke="#283F2E" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="4 2" />
-                            <ellipse cx="110" cy="372" rx="38" ry="4.5" fill="#2B2D2F" fillOpacity="0.18" />
-
-                            {/* DYNAMIC SCALED AVATAR & CLOTHES GROUP (Anchored at Feet: 110, 362) */}
-                            <g
-                              transform={`translate(110, 362) scale(${scaleX}, ${scaleY}) translate(-110, -362)`}
-                              style={{ transition: 'transform 0.22s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                            {/* DYNAMIC SCALED GROUP (Anchored at Feet: 50% 90%) */}
+                            <div
+                              className="absolute inset-0 transition-transform duration-200"
+                              style={{
+                                transformOrigin: '50% 90%',
+                                transform: `scale(${scaleX}, ${scaleY})`
+                              }}
                             >
-                              {/* ======================================================== */}
-                              {/* 1. REALISTIC SHADED VECTOR HUMAN MANNEQUIN (BODY BASE)   */}
-                              {/* ======================================================== */}
-                              {avatarGender === 'female' ? (
-                                <g className="transition-all duration-300">
-                                  {/* Hair Back */}
-                                  <path
-                                    d="M 94 30 C 84 16 136 16 126 30 C 136 54 142 86 142 110 C 132 94 124 74 110 70 C 96 74 88 94 78 110 C 78 86 84 54 94 30 Z"
-                                    fill="url(#hairGradFemaleApp)"
-                                  />
+                              {/* 1. REALISTIC FASHION LOOKBOOK CROQUIS MANNEQUIN (SVG) */}
+                              <svg viewBox="0 0 220 400" className="w-full h-full drop-shadow-sm select-none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                  <linearGradient id="femaleSkinGradHtmlApp" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#fff7ed" />
+                                    <stop offset="30%" stopColor="#fed7aa" />
+                                    <stop offset="75%" stopColor="#fdba74" />
+                                    <stop offset="100%" stopColor="#f97316" />
+                                  </linearGradient>
 
-                                  {/* Arms */}
-                                  <path
-                                    d="M 80 80 C 74 96 70 118 68 142 C 66 168 65 194 64 214 C 66 216 70 215 72 211 C 73 194 74 168 76 144 C 78 122 82 102 86 86 Z"
-                                    fill="url(#skinBaseFemaleApp)"
-                                    stroke="#ea580c"
-                                    strokeWidth="0.5"
-                                  />
-                                  <path
-                                    d="M 140 80 C 146 96 150 118 152 142 C 154 168 155 194 156 214 C 154 216 150 215 148 211 C 147 194 146 168 144 144 C 142 122 138 102 134 86 Z"
-                                    fill="url(#skinBaseFemaleApp)"
-                                    stroke="#ea580c"
-                                    strokeWidth="0.5"
-                                  />
+                                  <linearGradient id="femaleSkinShadowHtmlApp" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stopColor="#ea580c" stopOpacity="0.15" />
+                                    <stop offset="50%" stopColor="#ea580c" stopOpacity="0" />
+                                    <stop offset="100%" stopColor="#ea580c" stopOpacity="0.15" />
+                                  </linearGradient>
 
-                                  {/* Legs with Sculpted Calves */}
-                                  <path
-                                    d="M 81 174 C 81 200 83 226 85 252 C 87 272 84 298 86 324 C 87 338 88 348 89 356 L 97 356 C 97 348 96 338 95 324 C 93 298 96 272 94 252 C 93 226 98 200 108 182 C 102 184 94 184 89 183 C 85 182 81 178 81 174 Z"
-                                    fill="url(#skinBaseFemaleApp)"
-                                    stroke="#ea580c"
-                                    strokeWidth="0.5"
-                                  />
-                                  <path
-                                    d="M 139 174 C 139 200 137 226 135 252 C 133 272 136 298 134 324 C 133 338 132 348 131 356 L 123 356 C 123 348 124 338 125 324 C 127 298 124 272 126 252 C 127 226 122 200 112 182 C 118 184 126 184 131 183 C 135 182 139 178 139 174 Z"
-                                    fill="url(#skinBaseFemaleApp)"
-                                    stroke="#ea580c"
-                                    strokeWidth="0.5"
-                                  />
+                                  <linearGradient id="maleSkinGradHtmlApp" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#fffbeb" />
+                                    <stop offset="35%" stopColor="#fde68a" />
+                                    <stop offset="75%" stopColor="#fbbf24" />
+                                    <stop offset="100%" stopColor="#d97706" />
+                                  </linearGradient>
 
-                                  {/* Designer Minimal Sneakers */}
-                                  <g>
-                                    <path d="M 83 356 C 83 352 87 348 93 348 L 100 350 C 102 354 103 362 101 366 L 84 366 C 82 364 82 360 83 356 Z" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-                                    <rect x="83" y="364" width="18" height="3" rx="1" fill="#283F2E" />
-                                    <path d="M 88 356 L 94 356" stroke="#5F7A57" strokeWidth="1.5" strokeLinecap="round" />
-                                    <path d="M 137 356 C 137 352 133 348 127 348 L 120 350 C 118 354 117 362 119 366 L 136 366 C 138 364 138 360 137 356 Z" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-                                    <rect x="119" y="364" width="18" height="3" rx="1" fill="#283F2E" />
-                                    <path d="M 126 356 L 132 356" stroke="#5F7A57" strokeWidth="1.5" strokeLinecap="round" />
+                                  <linearGradient id="femaleHairGradHtmlApp" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#451a03" />
+                                    <stop offset="50%" stopColor="#78350f" />
+                                    <stop offset="100%" stopColor="#291102" />
+                                  </linearGradient>
+
+                                  <linearGradient id="maleHairGradHtmlApp" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#334155" />
+                                    <stop offset="60%" stopColor="#1e293b" />
+                                    <stop offset="100%" stopColor="#0f172a" />
+                                  </linearGradient>
+
+                                  <linearGradient id="undergarmentGradHtmlApp" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#334155" />
+                                    <stop offset="100%" stopColor="#1e293b" />
+                                  </linearGradient>
+                                </defs>
+
+                                {avatarGender === 'female' ? (
+                                  <g className="transition-all duration-300">
+                                    {/* Hair Back */}
+                                    <path
+                                      d="M 94 28 C 82 14 138 14 126 28 C 138 52 144 86 142 112 C 132 94 124 74 110 70 C 96 74 88 94 78 112 C 76 86 82 52 94 28 Z"
+                                      fill="url(#femaleHairGradHtmlApp)"
+                                    />
+
+                                    {/* Arms with Delicate Forearms & Hands */}
+                                    <path
+                                      d="M 78 80 C 72 96 68 118 66 142 C 64 168 64 194 63 214 C 65 216 69 215 71 211 C 72 194 73 168 75 144 C 77 122 80 102 84 86 Z"
+                                      fill="url(#femaleSkinGradHtmlApp)"
+                                      stroke="#ea580c"
+                                      strokeWidth="0.5"
+                                    />
+                                    <path
+                                      d="M 142 80 C 148 96 152 118 154 142 C 156 168 156 194 157 214 C 155 216 151 215 149 211 C 148 194 147 168 145 144 C 143 122 140 102 136 86 Z"
+                                      fill="url(#femaleSkinGradHtmlApp)"
+                                      stroke="#ea580c"
+                                      strokeWidth="0.5"
+                                    />
+
+                                    {/* Smooth Lookbook Legs with Knee & Calf Definition */}
+                                    <path
+                                      d="M 80 166 C 80 196 82 224 84 252 C 86 272 83 298 85 324 C 86 338 87 348 88 356 L 96 356 C 96 348 95 338 94 324 C 92 298 95 272 93 252 C 92 224 98 196 108 182 C 102 184 93 184 88 181 C 83 178 80 172 80 166 Z"
+                                      fill="url(#femaleSkinGradHtmlApp)"
+                                      stroke="#ea580c"
+                                      strokeWidth="0.5"
+                                    />
+                                    <path
+                                      d="M 140 166 C 140 196 138 224 136 252 C 134 272 137 298 135 324 C 134 338 133 348 132 356 L 124 356 C 124 348 125 338 126 324 C 128 298 125 272 127 252 C 128 224 122 196 112 182 C 118 184 127 184 132 181 C 137 178 140 172 140 166 Z"
+                                      fill="url(#femaleSkinGradHtmlApp)"
+                                      stroke="#ea580c"
+                                      strokeWidth="0.5"
+                                    />
+
+                                    {/* Designer White Sneakers */}
+                                    <g>
+                                      <path d="M 82 356 C 82 352 86 348 92 348 L 99 350 C 101 354 102 362 100 366 L 83 366 C 81 364 81 360 82 356 Z" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+                                      <rect x="82" y="364" width="18" height="3" rx="1" fill="#283F2E" />
+                                      <path d="M 87 356 L 93 356" stroke="#5F7A57" strokeWidth="1.5" strokeLinecap="round" />
+                                      <path d="M 138 356 C 138 352 134 348 128 348 L 121 350 C 119 354 118 362 120 366 L 137 366 C 139 364 139 360 138 356 Z" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+                                      <rect x="120" y="364" width="18" height="3" rx="1" fill="#283F2E" />
+                                      <path d="M 127 356 L 133 356" stroke="#5F7A57" strokeWidth="1.5" strokeLinecap="round" />
+                                    </g>
+
+                                    {/* Proportioned Torso with Natural Waist Taper & Shoulder Slope */}
+                                    <path
+                                      d="M 78 80 C 78 94 80 106 82 114 C 82 124 86 132 86 136 C 86 144 79 154 79 166 C 79 174 83 180 88 181 C 98 181 105 178 110 178 C 115 178 122 181 132 181 C 137 180 141 174 141 166 C 141 154 134 144 134 136 C 134 132 138 124 138 114 C 140 106 142 94 142 80 Z"
+                                      fill="url(#femaleSkinGradHtmlApp)"
+                                      stroke="#ea580c"
+                                      strokeWidth="0.5"
+                                    />
+                                    <path
+                                      d="M 78 80 C 78 94 80 106 82 114 C 82 124 86 132 86 136 C 86 144 79 154 79 166 C 79 174 83 180 88 181 C 98 181 105 178 110 178 C 115 178 122 181 132 181 C 137 180 141 174 141 166 C 141 154 134 144 134 136 C 134 132 138 124 138 114 C 140 106 142 94 142 80 Z"
+                                      fill="url(#femaleSkinShadowHtmlApp)"
+                                    />
+
+                                    {/* Minimalist Lookbook Activewear Base */}
+                                    <path d="M 82 94 C 82 114 87 118 110 118 C 133 118 138 114 138 94 L 134 90 C 128 90 124 100 110 100 C 96 100 92 90 86 90 Z" fill="url(#undergarmentGradHtmlApp)" />
+                                    <path d="M 86 140 C 86 150 79 160 79 172 L 98 178 L 110 170 L 122 178 L 141 172 C 141 160 134 150 134 140 Z" fill="url(#undergarmentGradHtmlApp)" />
+
+                                    {/* Neck & Clavicle Highlights */}
+                                    <path d="M 105 52 L 105 70 C 98 72 90 76 82 79 L 138 79 C 130 76 122 72 115 70 L 115 52 Z" fill="url(#femaleSkinGradHtmlApp)" stroke="#ea580c" strokeWidth="0.5" />
+                                    <path d="M 94 73 Q 110 77 126 73" stroke="#c2410c" strokeWidth="0.8" strokeLinecap="round" fill="none" opacity="0.6" />
+
+                                    {/* Clean Lookbook Face Profile & Styling */}
+                                    <path d="M 100 32 C 100 20 120 20 120 32 C 120 44 116 52 110 54 C 104 52 100 44 100 32 Z" fill="url(#femaleSkinGradHtmlApp)" stroke="#ea580c" strokeWidth="0.6" />
+                                    <path d="M 95 30 C 94 14 126 14 125 30 C 125 40 122 46 118 46 C 114 36 112 26 110 26 C 108 26 106 36 102 46 C 98 46 95 40 95 30 Z" fill="url(#femaleHairGradHtmlApp)" />
+                                    <path d="M 103 35 Q 106 34 109 35" stroke="#78350f" strokeWidth="0.8" strokeLinecap="round" fill="none" />
+                                    <path d="M 111 35 Q 114 34 117 35" stroke="#78350f" strokeWidth="0.8" strokeLinecap="round" fill="none" />
+                                    <circle cx="106" cy="38" r="1.3" fill="#2B2D2F" />
+                                    <circle cx="114" cy="38" r="1.3" fill="#2B2D2F" />
+                                    <path d="M 107 48 Q 110 50 113 48" stroke="#e11d48" strokeWidth="1.2" strokeLinecap="round" fill="none" />
                                   </g>
+                                ) : (
+                                  <g className="transition-all duration-300">
+                                    {/* Male Lookbook Model */}
+                                    {/* Arms */}
+                                    <path
+                                      d="M 70 78 C 62 96 58 120 56 146 C 54 172 53 198 52 216 C 55 218 58 216 60 212 C 62 196 63 172 65 148 C 67 124 71 102 76 86 Z"
+                                      fill="url(#maleSkinGradHtmlApp)"
+                                      stroke="#b45309"
+                                      strokeWidth="0.5"
+                                    />
+                                    <path
+                                      d="M 150 78 C 158 96 162 120 164 146 C 166 172 167 198 168 216 C 165 218 162 216 160 212 C 158 196 157 172 155 148 C 153 124 149 102 144 86 Z"
+                                      fill="url(#maleSkinGradHtmlApp)"
+                                      stroke="#b45309"
+                                      strokeWidth="0.5"
+                                    />
 
-                                  {/* Sculpted Torso & Waistline */}
-                                  <path
-                                    d="M 80 80 C 80 94 82 106 83 114 C 83 124 88 132 88 136 C 88 144 79 154 79 168 C 79 176 83 182 88 183 C 98 183 105 180 110 180 C 115 180 122 183 132 183 C 137 182 141 176 141 168 C 141 154 132 144 132 136 C 132 132 137 124 137 114 C 138 106 140 94 140 80 Z"
-                                    fill="url(#skinBaseFemaleApp)"
-                                    stroke="#ea580c"
-                                    strokeWidth="0.6"
-                                  />
-                                  <path
-                                    d="M 80 80 C 80 94 82 106 83 114 C 83 124 88 132 88 136 C 88 144 79 154 79 168 C 79 176 83 182 88 183 C 98 183 105 180 110 180 C 115 180 122 183 132 183 C 137 182 141 176 141 168 C 141 154 132 144 132 136 C 132 132 137 124 137 114 C 138 106 140 94 140 80 Z"
-                                    fill="url(#skinShadowFemaleApp)"
-                                  />
+                                    {/* Proportioned Legs */}
+                                    <path
+                                      d="M 79 174 C 79 202 80 228 82 254 C 84 274 81 300 83 324 C 84 338 85 348 86 356 L 96 356 C 96 348 95 338 94 324 C 92 300 95 274 93 254 C 92 228 97 202 107 184 C 99 186 91 186 85 184 C 81 182 79 178 79 174 Z"
+                                      fill="url(#maleSkinGradHtmlApp)"
+                                      stroke="#b45309"
+                                      strokeWidth="0.5"
+                                    />
+                                    <path
+                                      d="M 141 174 C 141 202 140 228 138 254 C 136 274 139 300 137 324 C 136 338 135 348 134 356 L 124 356 C 124 348 125 338 126 324 C 128 300 125 274 127 254 C 128 228 123 202 113 184 C 121 186 129 186 135 184 C 139 182 141 178 141 174 Z"
+                                      fill="url(#maleSkinGradHtmlApp)"
+                                      stroke="#b45309"
+                                      strokeWidth="0.5"
+                                    />
 
-                                  {/* High-Tech Seamless Active Underwear */}
-                                  <path d="M 83 94 C 83 116 88 120 110 120 C 132 120 137 116 137 94 L 133 90 C 128 90 124 102 110 102 C 96 102 92 90 87 90 Z" fill="url(#activeUnderwearGradApp)" />
-                                  <path d="M 88 142 C 88 152 79 162 79 174 L 98 180 L 110 172 L 122 180 L 141 174 C 141 162 132 152 132 142 Z" fill="url(#activeUnderwearGradApp)" />
+                                    {/* Street Sneakers */}
+                                    <g>
+                                      <path d="M 80 356 C 80 352 83 348 90 348 L 97 350 C 100 354 101 362 99 366 L 81 366 C 79 364 79 360 80 356 Z" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
+                                      <rect x="79" y="364" width="21" height="3.5" rx="1" fill="#2B2D2F" />
+                                      <path d="M 85 356 L 91 356" stroke="#5F7A57" strokeWidth="1.5" strokeLinecap="round" />
+                                      <path d="M 140 356 C 140 352 137 348 130 348 L 123 350 C 120 354 119 362 121 366 L 139 366 C 141 364 141 360 140 356 Z" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
+                                      <rect x="120" y="364" width="21" height="3.5" rx="1" fill="#2B2D2F" />
+                                      <path d="M 129 356 L 135 356" stroke="#5F7A57" strokeWidth="1.5" strokeLinecap="round" />
+                                    </g>
 
-                                  {/* Neck & Clavicle Lines */}
-                                  <path d="M 105 53 L 105 70 C 98 72 90 76 82 79 L 138 79 C 130 76 122 72 115 70 L 115 53 Z" fill="url(#skinBaseFemaleApp)" stroke="#ea580c" strokeWidth="0.5" />
-                                  <path d="M 96 74 Q 110 78 124 74" stroke="#c2410c" strokeWidth="0.9" strokeLinecap="round" fill="none" opacity="0.6" />
+                                    {/* Athletic Torso with Natural Shoulder Slope */}
+                                    <path
+                                      d="M 70 78 C 70 94 72 106 73 114 C 73 126 82 134 82 140 C 82 150 79 160 79 170 C 79 178 84 182 90 183 C 98 183 104 180 108 180 C 112 180 118 183 126 183 C 132 182 137 178 137 170 C 137 160 134 150 134 140 C 134 134 143 126 143 114 C 144 106 146 94 146 78 Z"
+                                      fill="url(#maleSkinGradHtmlApp)"
+                                      stroke="#b45309"
+                                      strokeWidth="0.6"
+                                    />
 
-                                  {/* Head, Fashion Features & Hairstyle */}
-                                  <path d="M 99 34 C 99 20 121 20 121 34 C 121 45 116 53 110 54 C 104 53 99 45 99 34 Z" fill="url(#skinBaseFemaleApp)" stroke="#ea580c" strokeWidth="0.7" />
-                                  <path d="M 96 32 C 95 16 125 16 124 32 C 124 42 121 47 118 47 C 114 36 112 28 110 28 C 108 28 106 36 102 47 C 99 47 96 42 96 32 Z" fill="url(#hairGradFemaleApp)" />
-                                  <circle cx="104" cy="38" r="1.5" fill="#2B2D2F" />
-                                  <circle cx="116" cy="38" r="1.5" fill="#2B2D2F" />
-                                  <path d="M 107 48 Q 110 50 113 48" stroke="#e11d48" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                                </g>
-                              ) : (
-                                <g className="transition-all duration-300">
-                                  {/* Male Athletic Model */}
-                                  {/* Arms */}
-                                  <path
-                                    d="M 72 80 C 64 98 60 122 58 148 C 56 174 55 200 54 218 C 57 220 60 218 62 214 C 64 198 65 174 67 150 C 69 126 73 104 78 88 Z"
-                                    fill="url(#skinBaseMaleApp)"
-                                    stroke="#b45309"
-                                    strokeWidth="0.5"
-                                  />
-                                  <path
-                                    d="M 148 80 C 156 98 160 122 162 148 C 164 174 165 200 166 218 C 163 220 160 218 158 214 C 156 198 155 174 153 150 C 151 126 147 104 142 88 Z"
-                                    fill="url(#skinBaseMaleApp)"
-                                    stroke="#b45309"
-                                    strokeWidth="0.5"
-                                  />
+                                    {/* Compression Shorts Base */}
+                                    <path d="M 82 92 C 82 118 86 124 108 124 C 130 124 134 118 134 92 L 140 94 C 142 115 140 125 135 146 L 81 146 C 76 125 74 115 76 94 Z" fill="url(#undergarmentGradHtmlApp)" />
+                                    <path d="M 81 146 L 135 146 L 137 178 L 120 184 L 108 174 L 96 184 L 79 178 Z" fill="url(#undergarmentGradHtmlApp)" />
 
-                                  {/* Athletic Legs */}
-                                  <path
-                                    d="M 80 174 C 80 202 81 228 83 254 C 85 274 82 300 84 324 C 85 338 86 348 87 356 L 97 356 C 97 348 96 338 95 324 C 93 300 96 274 94 254 C 93 228 98 202 108 184 C 100 186 92 186 86 184 C 82 182 80 178 80 174 Z"
-                                    fill="url(#skinBaseMaleApp)"
-                                    stroke="#b45309"
-                                    strokeWidth="0.5"
-                                  />
-                                  <path
-                                    d="M 140 174 C 140 202 139 228 137 254 C 135 274 138 300 136 324 C 135 338 134 348 133 356 L 123 356 C 123 348 124 338 125 324 C 127 300 124 274 126 254 C 127 228 122 202 112 184 C 120 186 128 186 134 184 C 138 182 140 178 140 174 Z"
-                                    fill="url(#skinBaseMaleApp)"
-                                    stroke="#b45309"
-                                    strokeWidth="0.5"
-                                  />
-
-                                  {/* Athletic Street Sneakers */}
-                                  <g>
-                                    <path d="M 81 356 C 81 352 84 348 91 348 L 98 350 C 101 354 102 362 100 366 L 82 366 C 80 364 80 360 81 356 Z" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
-                                    <rect x="80" y="364" width="21" height="3.5" rx="1" fill="#2B2D2F" />
-                                    <path d="M 86 356 L 92 356" stroke="#5F7A57" strokeWidth="1.5" strokeLinecap="round" />
-                                    <path d="M 139 356 C 139 352 136 348 129 348 L 122 350 C 119 354 118 362 120 366 L 138 366 C 140 364 140 360 139 356 Z" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
-                                    <rect x="119" y="364" width="21" height="3.5" rx="1" fill="#2B2D2F" />
-                                    <path d="M 128 356 L 134 356" stroke="#5F7A57" strokeWidth="1.5" strokeLinecap="round" />
+                                    {/* Neck & Jaw */}
+                                    <path d="M 103 54 L 103 72 C 94 74 84 76 72 80 L 148 80 C 136 76 126 74 117 72 L 117 54 Z" fill="url(#maleSkinGradHtmlApp)" stroke="#b45309" strokeWidth="0.5" />
+                                    <path d="M 97 32 C 97 18 123 18 123 32 C 123 46 117 54 110 56 C 103 54 97 46 97 32 Z" fill="url(#maleSkinGradHtmlApp)" stroke="#b45309" strokeWidth="0.6" />
+                                    {/* Quiff Hair */}
+                                    <path d="M 94 28 C 94 12 126 12 126 28 C 126 34 124 38 122 38 C 120 30 115 25 110 25 C 105 25 100 30 98 38 C 96 38 94 34 94 28 Z" fill="url(#hairGradMale)" />
+                                    <circle cx="104" cy="39" r="1.5" fill="#0f172a" />
+                                    <circle cx="116" cy="39" r="1.5" fill="#0f172a" />
+                                    <path d="M 106 49 H 114" stroke="#9a3412" strokeWidth="1.2" strokeLinecap="round" />
                                   </g>
+                                )}
+                              </svg>
 
-                                  {/* Sculpted Athletic Torso (V-Taper) */}
-                                  <path
-                                    d="M 72 80 C 72 96 74 108 75 116 C 75 128 84 136 84 142 C 84 152 81 162 81 172 C 81 180 86 184 92 185 C 100 185 106 182 110 182 C 114 182 120 185 128 185 C 134 184 139 180 139 172 C 139 162 136 152 136 142 C 136 136 145 128 145 116 C 146 108 148 96 148 80 Z"
-                                    fill="url(#skinBaseMaleApp)"
-                                    stroke="#b45309"
-                                    strokeWidth="0.6"
-                                  />
+                              {/* 2. ACCURATELY POSITIONED GARMENT LAYERS (SCALES IN LOCKSTEP WITH MANNEQUIN) */}
 
-                                  {/* Athletic Compression Base */}
-                                  <path d="M 84 92 C 84 118 88 124 110 124 C 132 124 136 118 136 92 L 142 94 C 144 115 142 125 137 146 L 83 146 C 78 125 76 115 78 94 Z" fill="url(#activeUnderwearGradApp)" />
-                                  <path d="M 83 146 L 137 146 L 139 178 L 122 184 L 110 174 L 98 184 L 81 178 Z" fill="url(#activeUnderwearGradApp)" />
-
-                                  {/* Neck & Jaw */}
-                                  <path d="M 103 54 L 103 72 C 94 74 84 76 72 80 L 148 80 C 136 76 126 74 117 72 L 117 54 Z" fill="url(#skinBaseMaleApp)" stroke="#b45309" strokeWidth="0.5" />
-                                  <path d="M 96 34 C 96 18 124 18 124 34 C 124 46 118 55 110 56 C 102 55 96 46 96 34 Z" fill="url(#skinBaseMaleApp)" stroke="#b45309" strokeWidth="0.7" />
-                                  {/* Textured Quiff Hair */}
-                                  <path d="M 94 28 C 94 12 126 12 126 28 C 126 34 124 38 122 38 C 120 30 115 25 110 25 C 105 25 100 30 98 38 C 96 38 94 34 94 28 Z" fill="url(#hairGradMaleApp)" />
-                                  <circle cx="103" cy="39" r="1.7" fill="#0f172a" />
-                                  <circle cx="117" cy="39" r="1.7" fill="#0f172a" />
-                                  <path d="M 106 49 H 114" stroke="#9a3412" strokeWidth="1.2" strokeLinecap="round" />
-                                </g>
-                              )}
-
-                              {/* ======================================================== */}
-                              {/* 2. EXACT PRODUCT IMAGE OVERLAY (BACKGROUND REMOVED)       */}
-                              {/* ======================================================== */}
-
-                              {/* LAYER A: BOTTOMS (Quần/Váy/Denim/Đầm) */}
+                              {/* LAYER A: BOTTOMS (Quần/Váy) - Mapped from Waist to Ankles */}
                               {outfit.bottom && (
-                                <g className="transition-all duration-200">
-                                  <image
-                                    href={outfit.bottom.images?.[0] || outfit.bottom.imageUrl}
-                                    xlinkHref={outfit.bottom.images?.[0] || outfit.bottom.imageUrl}
-                                    x={62 - ((adjBottom.scale - 1) * 48)}
-                                    y={136 + adjBottom.y - ((adjBottom.scale - 1) * 108)}
-                                    width={96 * adjBottom.scale}
-                                    height={220 * adjBottom.scale}
-                                    preserveAspectRatio="xMidYMid meet"
-                                    clipPath="url(#bottomLegsMaskApp)"
-                                    style={{
-                                      mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
-                                      filter: 'contrast(1.05) saturate(1.05)'
-                                    }}
-                                  />
-                                </g>
+                                <div
+                                  className="absolute z-10 transition-transform duration-150 flex items-center justify-center pointer-events-none"
+                                  style={{
+                                    top: '33%',
+                                    left: '23%',
+                                    width: '54%',
+                                    height: '54%',
+                                    transformOrigin: 'top center',
+                                    transform: `translateY(${clothingAdjustments.bottom?.y || 0}px) scale(${clothingAdjustments.bottom?.scale || 1.0})`
+                                  }}
+                                >
+                                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
+                                    <img
+                                      src={outfit.bottom.images?.[0] || outfit.bottom.imageUrl}
+                                      alt=""
+                                      className={`transition-all duration-200 select-none ${
+                                        clothingAdjustments.bottom?.cropHalf
+                                          ? 'w-[200%] max-w-none h-full object-contain object-left'
+                                          : 'w-full h-full object-contain object-center'
+                                      }`}
+                                      style={{
+                                        mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
+                                        filter: 'contrast(1.06) saturate(1.04)'
+                                      }}
+                                    />
+                                  </div>
+                                </div>
                               )}
 
-                              {/* LAYER B: TOPS (Áo hoodie/Sơ mi/Áo thun) - Overlaps Bottoms */}
+                              {/* LAYER B: TOPS (Áo sơ mi/Hoodie/Áo thun) - Shoulders to Hips, Overlaps Bottoms */}
                               {outfit.top && (
-                                <g className="transition-all duration-200">
-                                  <image
-                                    href={outfit.top.images?.[0] || outfit.top.imageUrl}
-                                    xlinkHref={outfit.top.images?.[0] || outfit.top.imageUrl}
-                                    x={56 - ((adjTop.scale - 1) * 54)}
-                                    y={72 + adjTop.y - ((adjTop.scale - 1) * 48)}
-                                    width={108 * adjTop.scale}
-                                    height={96 * adjTop.scale}
-                                    preserveAspectRatio="xMidYMid meet"
-                                    clipPath="url(#topTorsoMaskApp)"
-                                    style={{
-                                      mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
-                                      filter: 'contrast(1.05) saturate(1.05)'
-                                    }}
-                                  />
-                                </g>
+                                <div
+                                  className="absolute z-20 transition-transform duration-150 flex items-center justify-center pointer-events-none"
+                                  style={{
+                                    top: '16.5%',
+                                    left: '19%',
+                                    width: '62%',
+                                    height: '25%',
+                                    transformOrigin: 'center center',
+                                    transform: `translateY(${clothingAdjustments.top?.y || 0}px) scale(${clothingAdjustments.top?.scale || 1.0})`
+                                  }}
+                                >
+                                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
+                                    <img
+                                      src={outfit.top.images?.[0] || outfit.top.imageUrl}
+                                      alt=""
+                                      className={`transition-all duration-200 select-none ${
+                                        clothingAdjustments.top?.cropHalf
+                                          ? 'w-[200%] max-w-none h-full object-contain object-left'
+                                          : 'w-full h-full object-contain object-center'
+                                      }`}
+                                      style={{
+                                        mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
+                                        filter: 'contrast(1.06) saturate(1.04)'
+                                      }}
+                                    />
+                                  </div>
+                                </div>
                               )}
 
-                              {/* LAYER C: OUTERWEAR (Áo khoác/Blazer) - Layered Over Tops */}
+                              {/* LAYER C: OUTERWEAR (Áo khoác/Blazer) - Layered OVER Tops */}
                               {outfit.outerwear && (
-                                <g className="transition-all duration-200">
-                                  <image
-                                    href={outfit.outerwear.images?.[0] || outfit.outerwear.imageUrl}
-                                    xlinkHref={outfit.outerwear.images?.[0] || outfit.outerwear.imageUrl}
-                                    x={50 - ((adjOuter.scale - 1) * 60)}
-                                    y={68 + adjOuter.y - ((adjOuter.scale - 1) * 55)}
-                                    width={120 * adjOuter.scale}
-                                    height={110 * adjOuter.scale}
-                                    preserveAspectRatio="xMidYMid meet"
-                                    clipPath="url(#outerwearJacketMaskApp)"
-                                    style={{
-                                      mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
-                                      filter: 'contrast(1.05) saturate(1.05)'
-                                    }}
-                                  />
-                                </g>
+                                <div
+                                  className="absolute z-30 transition-transform duration-150 flex items-center justify-center pointer-events-none"
+                                  style={{
+                                    top: '15.5%',
+                                    left: '16%',
+                                    width: '68%',
+                                    height: '28%',
+                                    transformOrigin: 'center center',
+                                    transform: `translateY(${clothingAdjustments.outerwear?.y || 0}px) scale(${clothingAdjustments.outerwear?.scale || 1.0})`
+                                  }}
+                                >
+                                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
+                                    <img
+                                      src={outfit.outerwear.images?.[0] || outfit.outerwear.imageUrl}
+                                      alt=""
+                                      className={`transition-all duration-200 select-none ${
+                                        clothingAdjustments.outerwear?.cropHalf
+                                          ? 'w-[200%] max-w-none h-full object-contain object-left'
+                                          : 'w-full h-full object-contain object-center'
+                                      }`}
+                                      style={{
+                                        mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
+                                        filter: 'contrast(1.06) saturate(1.04)'
+                                      }}
+                                    />
+                                  </div>
+                                </div>
                               )}
 
-                              {/* LAYER D: ACCESSORIES (Túi / Balo / Khăn) */}
+                              {/* LAYER D: ACCESSORIES (Túi / Balo) - Draped Beside Model */}
                               {outfit.accessory && (
-                                <g className="transition-all duration-200">
-                                  {/* Draped strap across chest */}
-                                  <path
-                                    d={avatarGender === 'female' ? "M 134 78 Q 106 130 65 185" : "M 142 78 Q 110 135 62 192"}
-                                    stroke="#283F2E"
-                                    strokeWidth="3.2"
-                                    strokeLinecap="round"
-                                    fill="none"
-                                  />
-                                  <image
-                                    href={outfit.accessory.images?.[0] || outfit.accessory.imageUrl}
-                                    xlinkHref={outfit.accessory.images?.[0] || outfit.accessory.imageUrl}
-                                    x={26 - ((adjAcc.scale - 1) * 25)}
-                                    y={172 + adjAcc.y - ((adjAcc.scale - 1) * 30)}
-                                    width={56 * adjAcc.scale}
-                                    height={65 * adjAcc.scale}
-                                    preserveAspectRatio="xMidYMid meet"
-                                    clipPath="url(#accessoryBagMaskApp)"
-                                    style={{
-                                      mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
-                                      filter: 'contrast(1.05) saturate(1.05)'
-                                    }}
-                                  />
-                                </g>
+                                <div
+                                  className="absolute z-40 transition-transform duration-150 flex items-center justify-center pointer-events-none"
+                                  style={{
+                                    top: '40%',
+                                    left: '6%',
+                                    width: '30%',
+                                    height: '22%',
+                                    transformOrigin: 'center center',
+                                    transform: `translateY(${clothingAdjustments.accessory?.y || 0}px) scale(${clothingAdjustments.accessory?.scale || 1.0})`
+                                  }}
+                                >
+                                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
+                                    <img
+                                      src={outfit.accessory.images?.[0] || outfit.accessory.imageUrl}
+                                      alt=""
+                                      className={`transition-all duration-200 select-none ${
+                                        clothingAdjustments.accessory?.cropHalf
+                                          ? 'w-[200%] max-w-none h-full object-contain object-left'
+                                          : 'w-full h-full object-contain object-center'
+                                      }`}
+                                      style={{
+                                        mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
+                                        filter: 'contrast(1.06) saturate(1.04)'
+                                      }}
+                                    />
+                                  </div>
+                                </div>
                               )}
-                            </g>
-                          </svg>
+                            </div>
+                          </div>
                         );
                       })()}
 
                       {/* Empty Outfit Prompt */}
                       {outfitItems.length === 0 && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/75 backdrop-blur-xs rounded-2xl p-4 text-center">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/75 backdrop-blur-xs rounded-2xl p-4 text-center z-20">
                           <Shirt className="w-8 h-8 text-[#283F2E] mb-2 animate-bounce" />
-                          <div className="text-xs font-bold text-stone-800">Ma-nơ-canh chưa mặc đồ</div>
-                          <div className="text-[10px] text-stone-500">Hãy nhấp vào các món đồ bên phải để khoác ảnh sản phẩm lên người mẫu</div>
+                          <div className="text-xs font-bold text-stone-800">Người mẫu chưa mặc trang phục</div>
+                          <div className="text-[10px] text-stone-500">Hãy nhấp vào các món đồ bên phải để khoác trực tiếp lên người mẫu</div>
                         </div>
                       )}
                     </div>
 
                     {/* FINE-TUNE ADJUSTMENT CONTROLS */}
                     {outfitItems.length > 0 && (
-                      <div className="w-full bg-[#EFE3B8]/40 border border-[#283F2E]/20 rounded-2xl p-3 space-y-2">
+                      <div className="w-full bg-[#EFE3B8]/40 border border-[#283F2E]/20 rounded-2xl p-3 space-y-2.5">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] font-black uppercase text-[#283F2E] flex items-center gap-1.5">
                             <SlidersHorizontal className="w-3.5 h-3.5 text-[#5F7A57]" />
-                            <span>Tinh Chỉnh Khớp Quần Áo (Nudge & Scale)</span>
+                            <span>Tinh Chỉnh Khớp Quần Áo (Fine-Tune)</span>
                           </span>
                           <button
                             onClick={() => setBlendModeMultiply(!blendModeMultiply)}
                             className={`text-[9px] font-bold px-2 py-0.5 rounded-full border transition-all ${
                               blendModeMultiply ? 'bg-[#283F2E] text-white border-[#283F2E]' : 'bg-white text-stone-600 border-stone-300'
                             }`}
-                            title="Chế độ hòa trộn ảnh tách nền trắng"
+                            title="Hòa trộn tách nền trắng của ảnh sản phẩm"
                           >
                             Tách nền: {blendModeMultiply ? 'Multiply' : 'Tự nhiên'}
                           </button>
@@ -2207,7 +2232,7 @@ export default function App() {
                         {/* Slot Selector Pills */}
                         <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
                           {[
-                            { key: 'top', label: 'Áo', item: outfit.top },
+                            { key: 'top', label: 'Áo (Top)', item: outfit.top },
                             { key: 'bottom', label: 'Quần/Váy', item: outfit.bottom },
                             { key: 'outerwear', label: 'Áo khoác', item: outfit.outerwear },
                             { key: 'accessory', label: 'Phụ kiện', item: outfit.accessory }
@@ -2227,63 +2252,79 @@ export default function App() {
                           ))}
                         </div>
 
-                        {/* Adjustment Buttons */}
+                        {/* Adjustment Controls for the Active Slot */}
                         {outfit[activeAdjustSlot] ? (
-                          <div className="grid grid-cols-2 gap-2 pt-0.5 text-xs">
-                            {/* Vertical Offset */}
-                            <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
-                              <span className="text-[10px] font-bold text-stone-600">Dịch Y:</span>
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={() => adjustClothing(activeAdjustSlot, -3, 0)}
-                                  className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
-                                  title="Dịch lên trên"
-                                >
-                                  ▲
-                                </button>
-                                <span className="font-mono text-[10px] font-black w-6 text-center text-[#283F2E]">
-                                  {clothingAdjustments[activeAdjustSlot]?.y || 0}
-                                </span>
-                                <button
-                                  onClick={() => adjustClothing(activeAdjustSlot, 3, 0)}
-                                  className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
-                                  title="Dịch xuống dưới"
-                                >
-                                  ▼
-                                </button>
+                          <div className="space-y-2">
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              {/* Vertical Nudge */}
+                              <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
+                                <span className="text-[10px] font-bold text-stone-600">Dịch Y:</span>
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => adjustClothing(activeAdjustSlot, -3, 0)}
+                                    className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
+                                    title="Dịch lên trên"
+                                  >
+                                    ▲
+                                  </button>
+                                  <span className="font-mono text-[10px] font-black w-6 text-center text-[#283F2E]">
+                                    {clothingAdjustments[activeAdjustSlot]?.y || 0}
+                                  </span>
+                                  <button
+                                    onClick={() => adjustClothing(activeAdjustSlot, 3, 0)}
+                                    className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
+                                    title="Dịch xuống dưới"
+                                  >
+                                    ▼
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Scale Size */}
+                              <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
+                                <span className="text-[10px] font-bold text-stone-600">Cỡ:</span>
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => adjustClothing(activeAdjustSlot, 0, -0.05)}
+                                    className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
+                                    title="Thu nhỏ"
+                                  >
+                                    -
+                                  </button>
+                                  <span className="font-mono text-[10px] font-black w-8 text-center text-[#283F2E]">
+                                    {Math.round((clothingAdjustments[activeAdjustSlot]?.scale || 1.0) * 100)}%
+                                  </span>
+                                  <button
+                                    onClick={() => adjustClothing(activeAdjustSlot, 0, 0.05)}
+                                    className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
+                                    title="Phóng to"
+                                  >
+                                    +
+                                  </button>
+                                  <button
+                                    onClick={() => resetAdjustment(activeAdjustSlot)}
+                                    className="ml-1 text-[10px] text-stone-400 hover:text-stone-700 font-bold"
+                                    title="Đặt lại"
+                                  >
+                                    ↺
+                                  </button>
+                                </div>
                               </div>
                             </div>
 
-                            {/* Scale Size */}
-                            <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
-                              <span className="text-[10px] font-bold text-stone-600">Cỡ:</span>
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={() => adjustClothing(activeAdjustSlot, 0, -0.05)}
-                                  className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
-                                  title="Thu nhỏ"
-                                >
-                                  -
-                                </button>
-                                <span className="font-mono text-[10px] font-black w-8 text-center text-[#283F2E]">
-                                  {Math.round((clothingAdjustments[activeAdjustSlot]?.scale || 1.0) * 100)}%
-                                </span>
-                                <button
-                                  onClick={() => adjustClothing(activeAdjustSlot, 0, 0.05)}
-                                  className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
-                                  title="Phóng to"
-                                >
-                                  +
-                                </button>
-                                <button
-                                  onClick={() => resetAdjustment(activeAdjustSlot)}
-                                  className="ml-1 text-[10px] text-stone-400 hover:text-stone-700 font-bold"
-                                  title="Đặt lại vị trí ban đầu"
-                                >
-                                  ↺
-                                </button>
-                              </div>
-                            </div>
+                            {/* Front-only crop toggle button */}
+                            <button
+                              onClick={() => toggleCropHalf(activeAdjustSlot)}
+                              className={`w-full py-1.5 px-3 rounded-xl border text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all ${
+                                clothingAdjustments[activeAdjustSlot]?.cropHalf
+                                  ? 'bg-[#283F2E] text-white border-[#283F2E] shadow-2xs'
+                                  : 'bg-white hover:bg-[#EFE3B8]/60 text-stone-700 border-stone-200 shadow-2xs'
+                              }`}
+                              title="Cắt lấy nửa bên trái của ảnh sản phẩm (khi ảnh chụp ghép cả mặt trước và sau)"
+                            >
+                              <Scissors className="w-3.5 h-3.5 text-[#C9A24A]" />
+                              <span>{clothingAdjustments[activeAdjustSlot]?.cropHalf ? 'Đang bật cắt nửa ảnh (Mặt trước)' : 'Cắt nửa ảnh (Dành cho ảnh ghép 2 mặt trước-sau)'}</span>
+                            </button>
                           </div>
                         ) : (
                           <div className="text-[10px] text-stone-500 italic py-0.5 text-center">
@@ -2317,7 +2358,12 @@ export default function App() {
                             <div className="flex items-center gap-2 overflow-hidden">
                               <img src={outfit.top.images?.[0] || outfit.top.imageUrl} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0 border border-[#283F2E]/20" />
                               <div className="truncate">
-                                <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider">Áo (Top)</div>
+                                <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider flex items-center gap-1">
+                                  <span>Áo (Top)</span>
+                                  {clothingAdjustments.top?.cropHalf && (
+                                    <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span>
+                                  )}
+                                </div>
                                 <div className="text-[11px] font-bold text-[#2B2D2F] truncate">{outfit.top.title}</div>
                                 <div className="text-[10px] font-black text-[#283F2E]">{formatPrice(outfit.top.price)}</div>
                               </div>
@@ -2351,7 +2397,12 @@ export default function App() {
                             <div className="flex items-center gap-2 overflow-hidden">
                               <img src={outfit.bottom.images?.[0] || outfit.bottom.imageUrl} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0 border border-[#283F2E]/20" />
                               <div className="truncate">
-                                <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider">Quần/Váy</div>
+                                <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider flex items-center gap-1">
+                                  <span>Quần/Váy</span>
+                                  {clothingAdjustments.bottom?.cropHalf && (
+                                    <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span>
+                                  )}
+                                </div>
                                 <div className="text-[11px] font-bold text-[#2B2D2F] truncate">{outfit.bottom.title}</div>
                                 <div className="text-[10px] font-black text-[#283F2E]">{formatPrice(outfit.bottom.price)}</div>
                               </div>
@@ -2385,7 +2436,12 @@ export default function App() {
                             <div className="flex items-center gap-2 overflow-hidden">
                               <img src={outfit.outerwear.images?.[0] || outfit.outerwear.imageUrl} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0 border border-[#283F2E]/20" />
                               <div className="truncate">
-                                <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider">Áo khoác</div>
+                                <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider flex items-center gap-1">
+                                  <span>Áo khoác</span>
+                                  {clothingAdjustments.outerwear?.cropHalf && (
+                                    <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span>
+                                  )}
+                                </div>
                                 <div className="text-[11px] font-bold text-[#2B2D2F] truncate">{outfit.outerwear.title}</div>
                                 <div className="text-[10px] font-black text-[#283F2E]">{formatPrice(outfit.outerwear.price)}</div>
                               </div>
@@ -2419,7 +2475,12 @@ export default function App() {
                             <div className="flex items-center gap-2 overflow-hidden">
                               <img src={outfit.accessory.images?.[0] || outfit.accessory.imageUrl} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0 border border-[#283F2E]/20" />
                               <div className="truncate">
-                                <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider">Phụ kiện</div>
+                                <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider flex items-center gap-1">
+                                  <span>Phụ kiện</span>
+                                  {clothingAdjustments.accessory?.cropHalf && (
+                                    <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span>
+                                  )}
+                                </div>
                                 <div className="text-[11px] font-bold text-[#2B2D2F] truncate">{outfit.accessory.title}</div>
                                 <div className="text-[10px] font-black text-[#283F2E]">{formatPrice(outfit.accessory.price)}</div>
                               </div>
