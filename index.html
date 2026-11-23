@@ -55,9 +55,9 @@
   </script>
 
   <!-- React 18, ReactDOM, Babel Standalone -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin="anonymous"></script>
 
   <style>
     body {
@@ -81,18 +81,27 @@
     }
   </style>
   <script>
+    window.__appError = null;
     window.addEventListener('error', function(event) {
-      console.error('Captured runtime error:', event);
-      var root = document.getElementById('root');
-      if (root && (!root.innerHTML || root.innerHTML.trim() === '')) {
-        var errBox = document.createElement('div');
-        errBox.style = "position:fixed;inset:20px;z-index:99999;background:white;color:#2B2D2F;padding:24px;border-radius:24px;border:2px solid #283F2E;box-shadow:0 20px 40px rgba(0,0,0,0.15);max-width:600px;margin:auto;height:fit-content;font-family:sans-serif;";
-        errBox.innerHTML = '<h2 style="font-weight:900;color:#c026d3;margin-bottom:8px;">Thông báo hiển thị ứng dụng LoopStyle</h2>' +
-          '<p style="font-size:12px;color:#555;margin-bottom:12px;">Đang tải các thành phần giao diện. Nếu trang hiển thị trống do trình duyệt hạn chế bộ nhớ cục bộ, vui lòng bấm nút bên dưới:</p>' +
-          '<div style="font-family:monospace;font-size:11px;background:#f5f5f4;padding:12px;border-radius:12px;margin-bottom:16px;white-space:pre-wrap;">' + (event.message || 'Lỗi nạp script hoặc bộ nhớ cache') + '</div>' +
-          '<button onclick="try{localStorage.clear();}catch(e){}location.reload();" style="padding:10px 20px;background:#283F2E;color:white;border:none;border-radius:9999px;font-weight:bold;font-size:12px;cursor:pointer;">Xóa Cache LocalStorage & Tải Lại Trang</button>';
-        document.body.appendChild(errBox);
+      console.error('Captured error:', event);
+      if (event && event.message && event.message !== 'Script error.') {
+        window.__appError = event.message;
       }
+    });
+
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        if (root && (!root.children || root.children.length === 0)) {
+          var errBox = document.createElement('div');
+          errBox.style = "position:fixed;inset:20px;z-index:99999;background:white;color:#2B2D2F;padding:24px;border-radius:24px;border:2px solid #283F2E;box-shadow:0 20px 40px rgba(0,0,0,0.15);max-width:600px;margin:auto;height:fit-content;font-family:sans-serif;";
+          errBox.innerHTML = '<h2 style="font-weight:900;color:#283F2E;margin-bottom:8px;">LoopStyle — Thông báo khởi động</h2>' +
+            '<p style="font-size:12px;color:#555;margin-bottom:12px;">Giao diện chưa thể kết nối. Vui lòng bấm nút bên dưới để đặt lại bộ nhớ tạm và tải lại trang:</p>' +
+            '<div style="font-family:monospace;font-size:11px;background:#f5f5f4;padding:12px;border-radius:12px;margin-bottom:16px;white-space:pre-wrap;">' + (window.__appError || 'Đang kết nối tài nguyên CDN...') + '</div>' +
+            '<button onclick="try{localStorage.clear();}catch(e){}location.reload();" style="padding:10px 20px;background:#283F2E;color:white;border:none;border-radius:9999px;font-weight:bold;font-size:12px;cursor:pointer;">Xóa Cache & Tải Lại Trang</button>';
+          root.appendChild(errBox);
+        }
+      }, 1500);
     });
   </script>
 </head>
@@ -485,17 +494,41 @@ const Scissors = (p) => (
       }, [bmi]);
       const [mapActiveStep, setMapActiveStep] = useState(0);
 
-      // User Auth State
-      const [currentUser, setCurrentUser] = useState({
-        isLoggedIn: false,
-        name: '',
-        studentId: '',
-        email: '',
-        faculty: '',
-        batch: '',
-        ecoPoints: 0,
-        avatar: ''
+      // User Auth State with LocalStorage Persistence
+      const [currentUser, setCurrentUser] = useState(() => {
+        try {
+          const savedUser = localStorage.getItem('loopstyle_user');
+          if (savedUser) {
+            const parsed = JSON.parse(savedUser);
+            if (parsed && parsed.isLoggedIn) return parsed;
+          }
+        } catch (e) {
+          console.error('Error loading loopstyle_user from localStorage:', e);
+        }
+        return {
+          isLoggedIn: false,
+          name: '',
+          studentId: '',
+          email: '',
+          faculty: '',
+          batch: '',
+          ecoPoints: 0,
+          avatar: ''
+        };
       });
+
+      // Sync user session to localStorage
+      useEffect(() => {
+        try {
+          if (currentUser && currentUser.isLoggedIn) {
+            localStorage.setItem('loopstyle_user', JSON.stringify(currentUser));
+          } else {
+            localStorage.removeItem('loopstyle_user');
+          }
+        } catch (e) {
+          console.error('Error syncing loopstyle_user to localStorage:', e);
+        }
+      }, [currentUser]);
       const [loginForm, setLoginForm] = useState({ email: '', studentId: '', password: '' });
       const [loginError, setLoginError] = useState('');
       const [showPassword, setShowPassword] = useState(false);
@@ -927,10 +960,108 @@ const Scissors = (p) => (
         showToast('Đã nạp 4 món đồ mẫu để bạn thử đồ ngay trên ma-nơ-canh!', 'success');
       };
 
-      const handleLogout = () => {
-        setCurrentUser({ isLoggedIn: false, name: '', studentId: '', email: '', faculty: '', batch: '', ecoPoints: 0, avatar: '' });
+      // Auth Handlers (FTU Email & Session)
+      const handleLoginSubmit = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        setLoginError('');
+
+        const trimmedEmail = (loginForm.email || '').trim();
+        const trimmedId = (loginForm.studentId || '').trim();
+
+        if (!trimmedEmail) {
+          setLoginError('Vui lòng nhập email sinh viên FTU (@ftu.edu.vn)');
+          return;
+        }
+
+        if (!trimmedEmail.toLowerCase().endsWith('@ftu.edu.vn')) {
+          setLoginError('Email sinh viên bắt buộc phải có đuôi @ftu.edu.vn (Ví dụ: k62.2511110001@ftu.edu.vn)');
+          return;
+        }
+
+        if (!trimmedId) {
+          setLoginError('Vui lòng nhập Họ tên hoặc Mã sinh viên / Khóa (VD: K61-2111110482)');
+          return;
+        }
+
+        const batchMatch = trimmedId.match(/K\d{2}/i) || trimmedEmail.match(/k\d{2}/i);
+        const batchName = batchMatch ? (batchMatch[0].toUpperCase() + ' FTU Hanoi') : 'K62 FTU Hanoi';
+
+        let studentName = trimmedId;
+        let faculty = 'Kinh tế Đối ngoại';
+        const avatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';
+
+        if (trimmedEmail.toLowerCase().includes('mailinh') || trimmedId.toUpperCase().includes('2111110482')) {
+          studentName = 'Nguyễn Mai Linh';
+          faculty = 'Kinh tế Đối ngoại';
+        } else {
+          const emailPrefix = trimmedEmail.split('@')[0];
+          const parts = emailPrefix.split('.');
+          const namePart = parts[parts.length - 1];
+          if (namePart && namePart.length > 1 && isNaN(namePart)) {
+            studentName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+          }
+        }
+
+        const loggedInUser = {
+          isLoggedIn: true,
+          name: studentName,
+          studentId: trimmedId.toUpperCase(),
+          email: trimmedEmail.toLowerCase(),
+          faculty: faculty,
+          batch: batchName,
+          ecoPoints: 240,
+          avatar: avatarUrl
+        };
+
+        setCurrentUser(loggedInUser);
+        try {
+          localStorage.setItem('loopstyle_user', JSON.stringify(loggedInUser));
+        } catch (err) {}
+
         setIsAuthModalOpen(false);
-        showToast('Đã đăng xuất tài khoản FTU.');
+        setLoginForm({ email: '', studentId: '', password: '' });
+        showToast('Chào mừng ' + studentName + ' đến với LoopStyle FTU!', 'success');
+      };
+
+      const handleQuickDemoLogin = () => {
+        setLoginError('');
+        const demoUser = {
+          isLoggedIn: true,
+          name: 'Nguyễn Mai Linh',
+          studentId: 'K61-2111110482',
+          email: 'k61.mailinh@ftu.edu.vn',
+          faculty: 'Kinh tế Đối ngoại',
+          batch: 'K61 FTU Hanoi',
+          ecoPoints: 240,
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+        };
+        setCurrentUser(demoUser);
+        try {
+          localStorage.setItem('loopstyle_user', JSON.stringify(demoUser));
+        } catch (err) {}
+        setIsAuthModalOpen(false);
+        setLoginForm({ email: '', studentId: '', password: '' });
+        showToast('Đăng nhập nhanh thành công với tài khoản K61 FTU!', 'success');
+      };
+
+      const handleLogout = () => {
+        setCurrentUser({
+          isLoggedIn: false,
+          name: '',
+          studentId: '',
+          email: '',
+          faculty: '',
+          batch: '',
+          ecoPoints: 0,
+          avatar: ''
+        });
+        setLoginForm({ email: '', studentId: '', password: '' });
+        setLoginError('');
+        try {
+          localStorage.removeItem('loopstyle_user');
+        } catch (err) {}
+        setIsAuthModalOpen(false);
+        showToast('Đã đăng xuất tài khoản FTU.', 'info');
       };
 
       const handleConfirmPayment = () => {
@@ -3089,13 +3220,26 @@ const Scissors = (p) => (
                                 <CheckCircle2 className="w-3.5 h-3.5 text-[#5F7A57]" />
                               </div>
                               <div className="text-[10px] text-stone-500">
-                                {currentUser.isLoggedIn ? currentUser.studentId : 'Tài khoản FTU đã xác thực'}
+                                {currentUser.isLoggedIn ? currentUser.studentId : 'Tài khoản khách (chưa đăng nhập)'}
                               </div>
                             </div>
                           </div>
-                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                            Uy tín 100%
-                          </span>
+                          {!currentUser.isLoggedIn ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setLoginError('');
+                                setIsAuthModalOpen(true);
+                              }}
+                              className="text-[11px] font-bold text-[#283F2E] bg-[#EFE3B8] hover:bg-[#e2d59e] px-3 py-1.5 rounded-full border border-[#283F2E]/20 transition-all shadow-2xs"
+                            >
+                              Đăng nhập FTU ngay
+                            </button>
+                          ) : (
+                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                              Uy tín FTU 100%
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -4827,7 +4971,7 @@ const Scissors = (p) => (
                       <input
                         type="email"
                         required
-                        placeholder="k61.mailinh@ftu.edu.vn"
+                        placeholder="k62.2511110001@ftu.edu.vn"
                         value={loginForm.email}
                         onChange={(e) => {
                           setLoginForm({ ...loginForm, email: e.target.value });
@@ -4845,7 +4989,7 @@ const Scissors = (p) => (
                       <input
                         type="text"
                         required
-                        placeholder="Ví dụ: K61-2111110482 hoặc K62-xxxxxx"
+                        placeholder="Ví dụ: Nguyễn Mai Linh hoặc K62-2511110001"
                         value={loginForm.studentId}
                         onChange={(e) => {
                           setLoginForm({ ...loginForm, studentId: e.target.value });
@@ -4882,22 +5026,14 @@ const Scissors = (p) => (
                       </div>
                     </div>
 
-                    {/* Quick Autofill Demo */}
+                    {/* Quick 1-Click Demo Login */}
                     <button
                       type="button"
-                      onClick={() => {
-                        setLoginForm({
-                          email: 'k61.mailinh@ftu.edu.vn',
-                          studentId: 'K61-2111110482',
-                          password: 'ftupassword2026'
-                        });
-                        setLoginError('');
-                        showToast('Đã điền tài khoản mẫu K61 Ngoại Thương!', 'info');
-                      }}
-                      className="w-full py-2 bg-[#EFE3B8] hover:bg-[#E5D9A0] border border-[#283F2E]/30 text-[#283F2E] rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+                      onClick={handleQuickDemoLogin}
+                      className="w-full py-2.5 bg-[#EFE3B8] hover:bg-[#e4d7a8] border border-[#283F2E]/30 text-[#283F2E] rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all shadow-2xs active:scale-95"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#5F7A57]" />
-                      <span>Điền nhanh tài khoản mẫu K61 FTU</span>
+                      <Sparkles className="w-4 h-4 text-[#5F7A57]" />
+                      <span>Đăng nhập nhanh (Demo Sinh viên FTU)</span>
                     </button>
 
                     <button

@@ -236,17 +236,41 @@ export default function App() {
     return { text: 'Đầy đặn (Solid/Curvy)', color: 'text-purple-800 bg-purple-100 border-purple-300' };
   }, [bmi]);
 
-  // Auth State: default logged out as requested
-  const [currentUser, setCurrentUser] = useState({
-    isLoggedIn: false,
-    name: '',
-    studentId: '',
-    email: '',
-    faculty: '',
-    batch: '',
-    ecoPoints: 0,
-    avatar: ''
+  // Auth State with LocalStorage Persistence
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('loopstyle_user');
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        if (parsed && parsed.isLoggedIn) return parsed;
+      }
+    } catch (e) {
+      console.error('Error loading loopstyle_user from localStorage:', e);
+    }
+    return {
+      isLoggedIn: false,
+      name: '',
+      studentId: '',
+      email: '',
+      faculty: '',
+      batch: '',
+      ecoPoints: 0,
+      avatar: ''
+    };
   });
+
+  // Sync user session to localStorage
+  useEffect(() => {
+    try {
+      if (currentUser && currentUser.isLoggedIn) {
+        localStorage.setItem('loopstyle_user', JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem('loopstyle_user');
+      }
+    } catch (e) {
+      console.error('Error syncing loopstyle_user to localStorage:', e);
+    }
+  }, [currentUser]);
 
   // Login Form
   const [loginForm, setLoginForm] = useState({
@@ -737,13 +761,13 @@ export default function App() {
     showToast('Thanh toán thành công! Mã nhận đồ tại Tủ Loop đã sẵn sàng.', 'success');
   };
 
-  // Auth Submit
+  // Auth Submit & Session Handlers
   const handleLoginSubmit = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setLoginError('');
 
-    const trimmedEmail = loginForm.email.trim();
-    const trimmedId = loginForm.studentId.trim();
+    const trimmedEmail = (loginForm.email || '').trim();
+    const trimmedId = (loginForm.studentId || '').trim();
 
     if (!trimmedEmail) {
       setLoginError('Vui lòng nhập email sinh viên FTU (@ftu.edu.vn)');
@@ -751,24 +775,19 @@ export default function App() {
     }
 
     if (!trimmedEmail.toLowerCase().endsWith('@ftu.edu.vn')) {
-      setLoginError('Email sinh viên bắt buộc phải có đuôi @ftu.edu.vn');
+      setLoginError('Email sinh viên bắt buộc phải có đuôi @ftu.edu.vn (Ví dụ: k62.2511110001@ftu.edu.vn)');
       return;
     }
 
     if (!trimmedId) {
-      setLoginError('Vui lòng nhập mã sinh viên / khóa (VD: K61-2111110482)');
+      setLoginError('Vui lòng nhập Họ tên hoặc Mã sinh viên / Khóa (VD: K61-2111110482)');
       return;
     }
 
-    if (!loginForm.password) {
-      setLoginError('Vui lòng nhập mật khẩu tài khoản FTU');
-      return;
-    }
+    const batchMatch = trimmedId.match(/K\d{2}/i) || trimmedEmail.match(/k\d{2}/i);
+    const batchName = batchMatch ? (batchMatch[0].toUpperCase() + ' FTU Hanoi') : 'K62 FTU Hanoi';
 
-    const batchMatch = trimmedId.match(/K\d{2}/i);
-    const batchName = batchMatch ? `${batchMatch[0].toUpperCase()} FTU Hanoi` : 'FTU Hanoi';
-
-    let studentName = 'Sinh viên FTU';
+    let studentName = trimmedId;
     let faculty = 'Kinh tế Đối ngoại';
     const avatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';
 
@@ -777,16 +796,14 @@ export default function App() {
       faculty = 'Kinh tế Đối ngoại';
     } else {
       const emailPrefix = trimmedEmail.split('@')[0];
-      const namePart = emailPrefix.split('.').pop();
-      if (namePart && namePart.length > 1) {
+      const parts = emailPrefix.split('.');
+      const namePart = parts[parts.length - 1];
+      if (namePart && namePart.length > 1 && isNaN(namePart)) {
         studentName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-        studentName = `${studentName} (${batchMatch ? batchMatch[0].toUpperCase() : 'FTUer'})`;
-      } else {
-        studentName = `FTUer ${trimmedId.toUpperCase()}`;
       }
     }
 
-    setCurrentUser({
+    const loggedInUser = {
       isLoggedIn: true,
       name: studentName,
       studentId: trimmedId.toUpperCase(),
@@ -795,10 +812,37 @@ export default function App() {
       batch: batchName,
       ecoPoints: 240,
       avatar: avatarUrl
-    });
+    };
+
+    setCurrentUser(loggedInUser);
+    try {
+      localStorage.setItem('loopstyle_user', JSON.stringify(loggedInUser));
+    } catch (err) {}
 
     setIsAuthModalOpen(false);
-    showToast('Đăng nhập thành công với tài khoản FTU!', 'success');
+    setLoginForm({ email: '', studentId: '', password: '' });
+    showToast('Chào mừng ' + studentName + ' đến với LoopStyle FTU!', 'success');
+  };
+
+  const handleQuickDemoLogin = () => {
+    setLoginError('');
+    const demoUser = {
+      isLoggedIn: true,
+      name: 'Nguyễn Mai Linh',
+      studentId: 'K61-2111110482',
+      email: 'k61.mailinh@ftu.edu.vn',
+      faculty: 'Kinh tế Đối ngoại',
+      batch: 'K61 FTU Hanoi',
+      ecoPoints: 240,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+    };
+    setCurrentUser(demoUser);
+    try {
+      localStorage.setItem('loopstyle_user', JSON.stringify(demoUser));
+    } catch (err) {}
+    setIsAuthModalOpen(false);
+    setLoginForm({ email: '', studentId: '', password: '' });
+    showToast('Đăng nhập nhanh thành công với tài khoản K61 FTU!', 'success');
   };
 
   const handleLogout = () => {
@@ -814,6 +858,9 @@ export default function App() {
     });
     setLoginForm({ email: '', studentId: '', password: '' });
     setLoginError('');
+    try {
+      localStorage.removeItem('loopstyle_user');
+    } catch (err) {}
     setIsAuthModalOpen(false);
     showToast('Đã đăng xuất tài khoản FTU.', 'info');
   };
@@ -3265,13 +3312,26 @@ export default function App() {
                             <CheckCircle2 className="w-3.5 h-3.5 text-[#5F7A57]" />
                           </div>
                           <div className="text-[10px] text-stone-500">
-                            {currentUser.isLoggedIn ? currentUser.studentId : 'Tài khoản FTU đã xác thực'}
+                                {currentUser.isLoggedIn ? currentUser.studentId : 'Tài khoản khách (chưa đăng nhập)'}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                        Uy tín 100%
-                      </span>
+                          {!currentUser.isLoggedIn ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setLoginError('');
+                                setIsAuthModalOpen(true);
+                              }}
+                              className="text-[11px] font-bold text-[#283F2E] bg-[#EFE3B8] hover:bg-[#e2d59e] px-3 py-1.5 rounded-full border border-[#283F2E]/20 transition-all shadow-2xs"
+                            >
+                              Đăng nhập FTU ngay
+                            </button>
+                          ) : (
+                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                              Uy tín FTU 100%
+                            </span>
+                          )}
                     </div>
                   </div>
 
@@ -5158,7 +5218,7 @@ export default function App() {
                   <input
                     type="email"
                     required
-                    placeholder="k61.mailinh@ftu.edu.vn"
+                    placeholder="k62.2511110001@ftu.edu.vn"
                     value={loginForm.email}
                     onChange={(e) => {
                       setLoginForm({ ...loginForm, email: e.target.value });
@@ -5176,7 +5236,7 @@ export default function App() {
                   <input
                     type="text"
                     required
-                    placeholder="Ví dụ: K61-2111110482 hoặc K62-xxxxxx"
+                    placeholder="Ví dụ: Nguyễn Mai Linh hoặc K62-2511110001"
                     value={loginForm.studentId}
                     onChange={(e) => {
                       setLoginForm({ ...loginForm, studentId: e.target.value });
@@ -5213,23 +5273,15 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Quick Autofill Demo */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLoginForm({
-                      email: 'k61.mailinh@ftu.edu.vn',
-                      studentId: 'K61-2111110482',
-                      password: 'ftupassword2026'
-                    });
-                    setLoginError('');
-                    showToast('Đã điền tài khoản mẫu K61 Ngoại Thương!', 'info');
-                  }}
-                  className="w-full py-2 bg-[#EFE3B8] hover:bg-[#E5D9A0] border border-[#283F2E]/30 text-[#283F2E] rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#5F7A57]" />
-                  <span>Điền nhanh tài khoản mẫu K61 FTU</span>
-                </button>
+                {/* Quick 1-Click Demo Login */}
+                    <button
+                      type="button"
+                      onClick={handleQuickDemoLogin}
+                      className="w-full py-2.5 bg-[#EFE3B8] hover:bg-[#e4d7a8] border border-[#283F2E]/30 text-[#283F2E] rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all shadow-2xs active:scale-95"
+                    >
+                      <Sparkles className="w-4 h-4 text-[#5F7A57]" />
+                      <span>Đăng nhập nhanh (Demo Sinh viên FTU)</span>
+                    </button>
 
                 <button
                   type="submit"
