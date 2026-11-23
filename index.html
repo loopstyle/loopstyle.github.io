@@ -384,7 +384,170 @@ const Scissors = (p) => (
     );
 
         // --- USER SUBMITTED PRODUCTS (PERSISTED IN LOCALSTORAGE) ---
-    const INITIAL_PRODUCTS = [];
+        const INITIAL_PRODUCTS = [
+      {
+        id: 'sample-1',
+        title: 'Áo Hoodie FTU Oversized Xanh Rêu',
+        category: 'Áo hoodie',
+        subType: 'top',
+        listingType: 'both',
+        price: 180000,
+        originalPrice: 420000,
+        rentPrice: 60000,
+        depositAmount: 150000,
+        size: 'L',
+        condition: '95% Rất Tốt',
+        conditionScore: 95,
+        swapable: true,
+        swapWish: 'Đổi sơ mi trắng hoặc blazer',
+        images: ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'],
+        seller: { name: 'Mai Linh', batch: 'K61 FTU', faculty: 'Ngoại thương', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 3, verified: true },
+        locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-04', status: 'Sẵn sàng trong tủ' },
+        measurements: { note: 'Dài 70cm, Ngực 118cm, Vai 54cm' },
+        flaws: 'Đồ sạch sẽ, đạt chuẩn khử khuẩn UV-C',
+        uvCertified: true,
+        inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
+        description: 'Áo hoodie nỉ bông dày dặn, form rộng rãi ấm áp cho mùa thu đông tại khuôn viên FTU.',
+        co2Saved: '3.8 kg CO2',
+        waterSaved: '2,400 Lít',
+        tags: ['FTU Secondhand', 'Áo hoodie', 'Thu Đông']
+      },
+      {
+        id: 'sample-2',
+        title: 'Quần Denim Ống Rộng Vintage Xanh Classic',
+        category: 'Quần denim',
+        subType: 'bottom',
+        listingType: 'both',
+        price: 210000,
+        originalPrice: 490000,
+        rentPrice: 70000,
+        depositAmount: 180000,
+        size: 'M',
+        condition: '98% Như Mới',
+        conditionScore: 98,
+        swapable: true,
+        swapWish: 'Đổi quần tây hoặc chân váy',
+        images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80'],
+        seller: { name: 'Hoàng Long', batch: 'K60 FTU', faculty: 'Kinh tế đối ngoại', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', rating: 4.9, reviewsCount: 7, verified: true },
+        locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-07', status: 'Sẵn sàng trong tủ' },
+        measurements: { note: 'Eo 72-76cm, Dài 102cm, Ống 24cm' },
+        flaws: 'Denim dày dặn không sờn rách',
+        uvCertified: true,
+        inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
+        description: 'Quần jean form suông hack dáng tôn chiều cao cực đỉnh.',
+        co2Saved: '5.2 kg CO2',
+        waterSaved: '3,800 Lít',
+        tags: ['FTU Secondhand', 'Quần denim', 'Vintage']
+      },
+      {
+        id: 'sample-3',
+        title: 'Áo Blazer Thuyết Trình Sự Kiện Tone Xám Đậm',
+        category: 'Áo khoác',
+        subType: 'outerwear',
+        listingType: 'both',
+        price: 290000,
+        originalPrice: 750000,
+        rentPrice: 90000,
+        depositAmount: 250000,
+        size: 'L',
+        condition: '96% Rất Tốt',
+        conditionScore: 96,
+        swapable: false,
+        swapWish: 'Chỉ bán hoặc cho thuê sự kiện',
+        images: ['https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=800&q=80'],
+        seller: { name: 'Thanh Thảo', batch: 'K61 FTU', faculty: 'Tài chính - Ngân hàng', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 4, verified: true },
+        locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-02', status: 'Sẵn sàng trong tủ' },
+        measurements: { note: 'Vai 46cm, Ngực 104cm, Dài 72cm' },
+        flaws: 'Ve áo đứng form, khuy cài nguyên bản',
+        uvCertified: true,
+        inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
+        description: 'Blazer chuyên dụng thuyết trình đề án, tham gia hội thảo hoặc MC sự kiện FTU.',
+        co2Saved: '6.4 kg CO2',
+        waterSaved: '4,500 Lít',
+        tags: ['Cho thuê sự kiện', 'Áo khoác', 'Thuyết trình']
+      },
+      {
+        id: 'sample-4',
+        title: 'Túi Canvas Tote Eco LoopStyle FTU 100% Cotton',
+        category: 'Phụ kiện',
+        subType: 'accessory',
+        listingType: 'both',
+        price: 65000,
+        originalPrice: 150000,
+        rentPrice: 20000,
+        depositAmount: 50000,
+        size: 'Freesize',
+        condition: '100% Brand New',
+        conditionScore: 100,
+        swapable: true,
+        swapWish: 'Đổi sách giáo trình hoặc phụ kiện',
+        images: ['https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80'],
+        seller: { name: 'CLB Thời Trang Xanh', batch: 'FTU Club', faculty: 'ĐH Ngoại Thương', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 15, verified: true },
+        locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-11', status: 'Sẵn sàng trong tủ' },
+        measurements: { note: 'Ngang 36cm, Dài 40cm, Quai 28cm' },
+        flaws: 'Mới tinh 100%, đựng vừa laptop 15.6 inch',
+        uvCertified: true,
+        inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
+        description: 'Túi tote vải bố canvas dày dặn in biểu tượng thời trang tuần hoàn LoopStyle FTU.',
+        co2Saved: '1.5 kg CO2',
+        waterSaved: '900 Lít',
+        tags: ['FTU Secondhand', 'Phụ kiện', 'Eco Bag']
+      },
+      {
+        id: 'sample-5',
+        title: 'Chân Váy Xếp Ly Tennis Gen Z FTU Trắng Kem',
+        category: 'Chân váy',
+        subType: 'bottom',
+        listingType: 'both',
+        price: 160000,
+        originalPrice: 380000,
+        rentPrice: 50000,
+        depositAmount: 130000,
+        size: 'S',
+        condition: '97% Rất Mới',
+        conditionScore: 97,
+        swapable: true,
+        swapWish: 'Đổi áo len hoặc cardigan',
+        images: ['https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&w=800&q=80'],
+        seller: { name: 'Khánh Vy', batch: 'K62 FTU', faculty: 'Quản trị kinh doanh', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 5, verified: true },
+        locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-08', status: 'Sẵn sàng trong tủ' },
+        measurements: { note: 'Eo 64-68cm, Dài 42cm' },
+        flaws: 'Nếp ly sắc nét, có lót quần bảo hộ bên trong',
+        uvCertified: true,
+        inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
+        description: 'Chân váy tennis xếp ly năng động phù hợp đi học, hoạt động ngoại khóa hoặc chụp ảnh lookbook.',
+        co2Saved: '2.9 kg CO2',
+        waterSaved: '1,800 Lít',
+        tags: ['FTU Secondhand', 'Chân váy', 'Gen Z']
+      },
+      {
+        id: 'sample-6',
+        title: 'Áo Khoác Bomber Varsity Retro FTU K60',
+        category: 'Áo khoác',
+        subType: 'outerwear',
+        listingType: 'both',
+        price: 320000,
+        originalPrice: 780000,
+        rentPrice: 95000,
+        depositAmount: 260000,
+        size: 'XL',
+        condition: '95% Rất Tốt',
+        conditionScore: 95,
+        swapable: true,
+        swapWish: 'Đổi varsity khác màu hoặc giày sneaker',
+        images: ['https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80'],
+        seller: { name: 'Đức Minh', batch: 'K60 FTU', faculty: 'Luật thương mại quốc tế', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80', rating: 4.8, reviewsCount: 6, verified: true },
+        locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-05', status: 'Sẵn sàng trong tủ' },
+        measurements: { note: 'Vai 50cm, Ngực 116cm, Dài 71cm' },
+        flaws: 'Chất dạ phối tay da cao cấp, bo dệt nguyên vẹn',
+        uvCertified: true,
+        inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
+        description: 'Áo khoác bóng chày varsity đậm chất streetstyle sinh viên FTU, giữ ấm tuyệt vời.',
+        co2Saved: '7.1 kg CO2',
+        waterSaved: '5,200 Lít',
+        tags: ['FTU Secondhand', 'Áo khoác', 'Varsity']
+      }
+    ];
 
     const DEMO_ACTIVE_RENTALS = [];
 
@@ -429,7 +592,7 @@ const Scissors = (p) => (
           const saved = localStorage.getItem('loopstyle_products');
           if (saved) {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) return parsed;
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
           }
         } catch (e) {
           console.error('Error loading loopstyle_products from localStorage:', e);
@@ -460,12 +623,30 @@ const Scissors = (p) => (
       const [isEcoImpactOpen, setIsEcoImpactOpen] = useState(false);
 
                   // 2D Outfit State
-      const [outfit, setOutfit] = useState({
-        top: null,
-        bottom: null,
-        outerwear: null,
-        accessory: null
+      const [outfit, setOutfit] = useState(() => {
+        try {
+          const saved = localStorage.getItem('loopstyle_outfit');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && (parsed.top || parsed.bottom || parsed.outerwear || parsed.accessory)) {
+              return parsed;
+            }
+          }
+        } catch (e) {}
+        return {
+          top: INITIAL_PRODUCTS[0] || null,
+          bottom: INITIAL_PRODUCTS[1] || null,
+          outerwear: null,
+          accessory: INITIAL_PRODUCTS[3] || null
+        };
       });
+
+      // Sync outfit state to localStorage
+      useEffect(() => {
+        try {
+          localStorage.setItem('loopstyle_outfit', JSON.stringify(outfit));
+        } catch (e) {}
+      }, [outfit]);
       const [clothingAdjustments, setClothingAdjustments] = useState({
         top: { y: 0, scale: 1.0, cropHalf: false },
         bottom: { y: 0, scale: 1.0, cropHalf: false },
@@ -842,122 +1023,12 @@ const Scissors = (p) => (
         setIsCartOpen(true);
       };
 
-      const loadSampleWardrobe = () => {
-        const sampleItems = [
-          {
-            id: 'sample-1',
-            title: 'Áo Hoodie FTU Oversized Xanh Rêu',
-            category: 'Áo hoodie',
-            subType: 'top',
-            listingType: 'both',
-            price: 180000,
-            originalPrice: 420000,
-            rentPrice: 60000,
-            depositAmount: 150000,
-            size: 'L',
-            condition: '95% Rất Tốt',
-            conditionScore: 95,
-            swapable: true,
-            swapWish: 'Đổi sơ mi trắng hoặc blazer',
-            images: ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'],
-            seller: { name: 'Mai Linh', batch: 'K61 FTU', faculty: 'Ngoại thương', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 3, verified: true },
-            locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-04', status: 'Sẵn sàng trong tủ' },
-            measurements: { note: 'Dài 70cm, Ngực 118cm, Vai 54cm' },
-            flaws: 'Đồ sạch sẽ, đạt chuẩn khử khuẩn UV-C',
-            uvCertified: true,
-            inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
-            description: 'Áo hoodie nỉ bông dày dặn, form rộng rãi ấm áp cho mùa thu đông.',
-            co2Saved: '3.8 kg CO2',
-            waterSaved: '2,400 Lít',
-            tags: ['FTU Secondhand', 'Áo hoodie', 'Thu Đông']
-          },
-          {
-            id: 'sample-2',
-            title: 'Quần Denim Ống Rộng Vintage Xanh Classic',
-            category: 'Quần denim',
-            subType: 'bottom',
-            listingType: 'both',
-            price: 210000,
-            originalPrice: 490000,
-            rentPrice: 70000,
-            depositAmount: 180000,
-            size: 'M',
-            condition: '98% Như Mới',
-            conditionScore: 98,
-            swapable: true,
-            swapWish: 'Đổi quần tây hoặc chân váy',
-            images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80'],
-            seller: { name: 'Hoàng Long', batch: 'K60 FTU', faculty: 'Kinh tế đối ngoại', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', rating: 4.9, reviewsCount: 7, verified: true },
-            locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-07', status: 'Sẵn sàng trong tủ' },
-            measurements: { note: 'Eo 72-76cm, Dài 102cm, Ống 24cm' },
-            flaws: 'Denim dày dặn không sờn rách',
-            uvCertified: true,
-            inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
-            description: 'Quần jean form suông hack dáng tôn chiều cao cực đỉnh.',
-            co2Saved: '5.2 kg CO2',
-            waterSaved: '3,800 Lít',
-            tags: ['FTU Secondhand', 'Quần denim', 'Vintage']
-          },
-          {
-            id: 'sample-3',
-            title: 'Áo Blazer Thuyết Trình Sự Kiện Tone Xám Đậm',
-            category: 'Áo khoác',
-            subType: 'outerwear',
-            listingType: 'both',
-            price: 290000,
-            originalPrice: 750000,
-            rentPrice: 90000,
-            depositAmount: 250000,
-            size: 'L',
-            condition: '96% Rất Tốt',
-            conditionScore: 96,
-            swapable: false,
-            swapWish: 'Chỉ bán hoặc cho thuê sự kiện',
-            images: ['https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=800&q=80'],
-            seller: { name: 'Thanh Thảo', batch: 'K61 FTU', faculty: 'Tài chính - Ngân hàng', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 4, verified: true },
-            locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-02', status: 'Sẵn sàng trong tủ' },
-            measurements: { note: 'Vai 46cm, Ngực 104cm, Dài 72cm' },
-            flaws: 'Ve áo đứng form, khuy cài nguyên bản',
-            uvCertified: true,
-            inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
-            description: 'Blazer chuyên dụng thuyết trình đề án, tham gia hội thảo hoặc MC sự kiện FTU.',
-            co2Saved: '6.4 kg CO2',
-            waterSaved: '4,500 Lít',
-            tags: ['Cho thuê sự kiện', 'Áo khoác', 'Thuyết trình']
-          },
-          {
-            id: 'sample-4',
-            title: 'Túi Canvas Tote Eco LoopStyle FTU 100% Cotton',
-            category: 'Phụ kiện',
-            subType: 'accessory',
-            listingType: 'both',
-            price: 65000,
-            originalPrice: 150000,
-            rentPrice: 20000,
-            depositAmount: 50000,
-            size: 'Freesize',
-            condition: '100% Brand New',
-            conditionScore: 100,
-            swapable: true,
-            swapWish: 'Đổi sách giáo trình hoặc phụ kiện',
-            images: ['https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80'],
-            seller: { name: 'CLB Thời Trang Xanh', batch: 'FTU Club', faculty: 'ĐH Ngoại Thương', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 15, verified: true },
-            locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-11', status: 'Sẵn sàng trong tủ' },
-            measurements: { note: 'Ngang 36cm, Dài 40cm, Quai 28cm' },
-            flaws: 'Mới tinh 100%, đựng vừa laptop 15.6 inch',
-            uvCertified: true,
-            inspectionNotes: 'Đạt chuẩn kiểm định LoopStyle',
-            description: 'Túi tote vải bố canvas dày dặn in biểu tượng thời trang tuần hoàn LoopStyle FTU.',
-            co2Saved: '1.5 kg CO2',
-            waterSaved: '900 Lít',
-            tags: ['FTU Secondhand', 'Phụ kiện', 'Eco Bag']
-          }
-        ];
-        setProducts(sampleItems);
+            const loadSampleWardrobe = () => {
+        setProducts(INITIAL_PRODUCTS);
         try {
-          localStorage.setItem('loopstyle_products', JSON.stringify(sampleItems));
+          localStorage.setItem('loopstyle_products', JSON.stringify(INITIAL_PRODUCTS));
         } catch (e) {}
-        showToast('Đã nạp 4 món đồ mẫu để bạn thử đồ ngay trên ma-nơ-canh!', 'success');
+        showToast('Đã nạp đầy đủ tủ đồ mẫu FTU để thử đồ ngay trên ma-nơ-canh!', 'success');
       };
 
       // Auth Handlers (FTU Email & Session)
@@ -2066,10 +2137,10 @@ const Scissors = (p) => (
                                 <div
                                   className="absolute z-10 transition-transform duration-150 flex items-center justify-center pointer-events-none"
                                   style={{
-                                    top: '33%',
-                                    left: '23%',
-                                    width: '54%',
-                                    height: '54%',
+                                    top: '34%',
+                                    left: '21%',
+                                    width: '58%',
+                                    height: '53%',
                                     transformOrigin: 'top center',
                                     transform: `translateY(${clothingAdjustments.bottom?.y || 0}px) scale(${clothingAdjustments.bottom?.scale || 1.0})`
                                   }}
@@ -2081,7 +2152,7 @@ const Scissors = (p) => (
                                       className={`transition-all duration-200 select-none ${
                                         clothingAdjustments.bottom?.cropHalf
                                           ? 'w-[200%] max-w-none h-full object-contain object-left'
-                                          : 'w-full h-full object-contain object-center'
+                                          : 'w-full h-full object-contain object-top'
                                       }`}
                                       style={{
                                         mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
@@ -2097,11 +2168,11 @@ const Scissors = (p) => (
                                 <div
                                   className="absolute z-20 transition-transform duration-150 flex items-center justify-center pointer-events-none"
                                   style={{
-                                    top: '16.5%',
-                                    left: '19%',
-                                    width: '62%',
-                                    height: '25%',
-                                    transformOrigin: 'center center',
+                                    top: '17%',
+                                    left: '18%',
+                                    width: '64%',
+                                    height: '26%',
+                                    transformOrigin: 'top center',
                                     transform: `translateY(${clothingAdjustments.top?.y || 0}px) scale(${clothingAdjustments.top?.scale || 1.0})`
                                   }}
                                 >
@@ -2112,7 +2183,7 @@ const Scissors = (p) => (
                                       className={`transition-all duration-200 select-none ${
                                         clothingAdjustments.top?.cropHalf
                                           ? 'w-[200%] max-w-none h-full object-contain object-left'
-                                          : 'w-full h-full object-contain object-center'
+                                          : 'w-full h-full object-contain object-top'
                                       }`}
                                       style={{
                                         mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
@@ -2128,11 +2199,11 @@ const Scissors = (p) => (
                                 <div
                                   className="absolute z-30 transition-transform duration-150 flex items-center justify-center pointer-events-none"
                                   style={{
-                                    top: '15.5%',
-                                    left: '16%',
-                                    width: '68%',
-                                    height: '28%',
-                                    transformOrigin: 'center center',
+                                    top: '16%',
+                                    left: '14%',
+                                    width: '72%',
+                                    height: '31%',
+                                    transformOrigin: 'top center',
                                     transform: `translateY(${clothingAdjustments.outerwear?.y || 0}px) scale(${clothingAdjustments.outerwear?.scale || 1.0})`
                                   }}
                                 >
@@ -2143,7 +2214,7 @@ const Scissors = (p) => (
                                       className={`transition-all duration-200 select-none ${
                                         clothingAdjustments.outerwear?.cropHalf
                                           ? 'w-[200%] max-w-none h-full object-contain object-left'
-                                          : 'w-full h-full object-contain object-center'
+                                          : 'w-full h-full object-contain object-top'
                                       }`}
                                       style={{
                                         mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
@@ -2160,9 +2231,9 @@ const Scissors = (p) => (
                                   className="absolute z-40 transition-transform duration-150 flex items-center justify-center pointer-events-none"
                                   style={{
                                     top: '40%',
-                                    left: '6%',
+                                    left: '4%',
                                     width: '30%',
-                                    height: '22%',
+                                    height: '26%',
                                     transformOrigin: 'center center',
                                     transform: `translateY(${clothingAdjustments.accessory?.y || 0}px) scale(${clothingAdjustments.accessory?.scale || 1.0})`
                                   }}
