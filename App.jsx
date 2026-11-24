@@ -81,7 +81,7 @@ const INITIAL_PRODUCTS = [
     conditionScore: 95,
     swapable: true,
     swapWish: 'Đổi sơ mi trắng hoặc blazer',
-    images: ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'],
     seller: { name: 'Mai Linh', batch: 'K61 FTU', faculty: 'Ngoại thương', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 3, verified: true },
     locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-04', status: 'Sẵn sàng trong tủ' },
     measurements: { note: 'Dài 70cm, Ngực 118cm, Vai 54cm' },
@@ -108,7 +108,7 @@ const INITIAL_PRODUCTS = [
     conditionScore: 98,
     swapable: true,
     swapWish: 'Đổi quần tây hoặc chân váy',
-    images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=800&q=80'],
     seller: { name: 'Hoàng Long', batch: 'K60 FTU', faculty: 'Kinh tế đối ngoại', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', rating: 4.9, reviewsCount: 7, verified: true },
     locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-07', status: 'Sẵn sàng trong tủ' },
     measurements: { note: 'Eo 72-76cm, Dài 102cm, Ống 24cm' },
@@ -189,7 +189,7 @@ const INITIAL_PRODUCTS = [
     conditionScore: 97,
     swapable: true,
     swapWish: 'Đổi áo len hoặc cardigan',
-    images: ['https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&w=800&q=80'],
+    images: ['https://images.unsplash.com/photo-1582142407894-ec85a1260a46?auto=format&fit=crop&w=800&q=80'],
     seller: { name: 'Khánh Vy', batch: 'K62 FTU', faculty: 'Quản trị kinh doanh', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 5, verified: true },
     locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-08', status: 'Sẵn sàng trong tủ' },
     measurements: { note: 'Eo 64-68cm, Dài 42cm' },
@@ -280,9 +280,9 @@ const CATEGORIES = [
 ];
 
 const SAMPLE_PHOTOS = [
-  { label: 'Hoodie Boxy', url: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80' },
+  { label: 'Hoodie Boxy', url: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80' },
   { label: 'Đầm Hoa Nhí', url: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80' },
-  { label: 'Quần Jeans Retro', url: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80' },
+  { label: 'Quần Jeans Retro', url: 'https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=800&q=80' },
   { label: 'Áo Khoác Dạ', url: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=800&q=80' },
   { label: 'Sơ Mi Lụa', url: 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?auto=format&fit=crop&w=800&q=80' },
   { label: 'Túi Canvas', url: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80' }
@@ -297,7 +297,20 @@ export default function App() {
       const saved = localStorage.getItem('loopstyle_products');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((item) => {
+            if (item.id === 'sample-1' && item.images?.[0]?.includes('photo-1556905055-8f358a7a47b2')) {
+              return { ...item, images: ['https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'] };
+            }
+            if (item.id === 'sample-2' && item.images?.[0]?.includes('photo-1541099649105-f69ad21f3246')) {
+              return { ...item, images: ['https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=800&q=80'] };
+            }
+            if (item.id === 'sample-5' && item.images?.[0]?.includes('photo-1583496661160-fb5886a0aaaa')) {
+              return { ...item, images: ['https://images.unsplash.com/photo-1582142407894-ec85a1260a46?auto=format&fit=crop&w=800&q=80'] };
+            }
+            return item;
+          });
+        }
       }
     } catch (e) {
       console.error('Error loading loopstyle_products from localStorage:', e);
@@ -462,7 +475,7 @@ export default function App() {
     lockerId: 'loc-1',
     description: '',
     measurements: '',
-    imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'
   });
 
   // Multi-step Consignment State: 1 = Input, 2 = Confirm & Delivery, 3 = Success & PIN
@@ -758,7 +771,7 @@ export default function App() {
         conditionScore: 95,
         swapable: true,
         swapWish: 'Đổi sơ mi trắng hoặc blazer',
-        images: ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'],
+        images: ['https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'],
         seller: { name: 'Mai Linh', batch: 'K61 FTU', faculty: 'Ngoại thương', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 3, verified: true },
         locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-04', status: 'Sẵn sàng trong tủ' },
         measurements: { note: 'Dài 70cm, Ngực 118cm, Vai 54cm' },
@@ -785,7 +798,7 @@ export default function App() {
         conditionScore: 98,
         swapable: true,
         swapWish: 'Đổi quần tây hoặc chân váy',
-        images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80'],
+        images: ['https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=800&q=80'],
         seller: { name: 'Hoàng Long', batch: 'K60 FTU', faculty: 'Kinh tế đối ngoại', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', rating: 4.9, reviewsCount: 7, verified: true },
         locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-07', status: 'Sẵn sàng trong tủ' },
         measurements: { note: 'Eo 72-76cm, Dài 102cm, Ống 24cm' },
@@ -1095,7 +1108,7 @@ export default function App() {
       conditionScore: 95,
       swapable: consignForm.listingType !== 'rent' ? consignForm.swapable : false,
       swapWish: consignForm.swapWish || 'Sẵn sàng trao đổi hoặc cho thuê sự kiện',
-      images: [consignForm.imageUrl || 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'],
+      images: [consignForm.imageUrl || 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'],
       seller: {
         name: currentUser.isLoggedIn ? currentUser.name : 'Sinh viên FTU',
         batch: currentUser.isLoggedIn ? currentUser.batch : 'K61 FTU Hanoi',
@@ -3754,7 +3767,7 @@ export default function App() {
                           lockerId: 'loc-1',
                           description: '',
                           measurements: '',
-                          imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'
+                          imageUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'
                         });
                         setConsignStep(1);
                       }}

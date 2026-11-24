@@ -400,7 +400,7 @@ const Scissors = (p) => (
         conditionScore: 95,
         swapable: true,
         swapWish: 'Đổi sơ mi trắng hoặc blazer',
-        images: ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'],
+        images: ['https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'],
         seller: { name: 'Mai Linh', batch: 'K61 FTU', faculty: 'Ngoại thương', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 3, verified: true },
         locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-04', status: 'Sẵn sàng trong tủ' },
         measurements: { note: 'Dài 70cm, Ngực 118cm, Vai 54cm' },
@@ -427,7 +427,7 @@ const Scissors = (p) => (
         conditionScore: 98,
         swapable: true,
         swapWish: 'Đổi quần tây hoặc chân váy',
-        images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80'],
+        images: ['https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=800&q=80'],
         seller: { name: 'Hoàng Long', batch: 'K60 FTU', faculty: 'Kinh tế đối ngoại', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', rating: 4.9, reviewsCount: 7, verified: true },
         locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-07', status: 'Sẵn sàng trong tủ' },
         measurements: { note: 'Eo 72-76cm, Dài 102cm, Ống 24cm' },
@@ -508,7 +508,7 @@ const Scissors = (p) => (
         conditionScore: 97,
         swapable: true,
         swapWish: 'Đổi áo len hoặc cardigan',
-        images: ['https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&w=800&q=80'],
+        images: ['https://images.unsplash.com/photo-1582142407894-ec85a1260a46?auto=format&fit=crop&w=800&q=80'],
         seller: { name: 'Khánh Vy', batch: 'K62 FTU', faculty: 'Quản trị kinh doanh', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80', rating: 5.0, reviewsCount: 5, verified: true },
         locker: { locationId: 'loc-1', locationName: 'Trạm Tủ Loop — Sảnh Tầng 1 Nhà B', compartment: 'Ngăn B-08', status: 'Sẵn sàng trong tủ' },
         measurements: { note: 'Eo 64-68cm, Dài 42cm' },
@@ -576,9 +576,9 @@ const Scissors = (p) => (
     const CATEGORIES = ['Tất cả', 'Áo hoodie', 'Đầm/Váy', 'Quần denim', 'Áo khoác', 'Áo sơ mi', 'Phụ kiện'];
 
     const SAMPLE_PHOTOS = [
-      { label: 'Hoodie Boxy', url: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80' },
+      { label: 'Hoodie Boxy', url: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80' },
       { label: 'Đầm Hoa Nhí', url: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80' },
-      { label: 'Quần Jeans Retro', url: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80' },
+      { label: 'Quần Jeans Retro', url: 'https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=800&q=80' },
       { label: 'Áo Khoác Dạ', url: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=800&q=80' },
       { label: 'Sơ Mi Lụa', url: 'https://images.unsplash.com/photo-1598554747436-c9293d6a588f?auto=format&fit=crop&w=800&q=80' },
       { label: 'Túi Canvas', url: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80' }
@@ -592,7 +592,21 @@ const Scissors = (p) => (
           const saved = localStorage.getItem('loopstyle_products');
           if (saved) {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              // Seamlessly update older sample product photos with clean studio photos
+              return parsed.map((item) => {
+                if (item.id === 'sample-1' && item.images?.[0]?.includes('photo-1556905055-8f358a7a47b2')) {
+                  return { ...item, images: ['https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'] };
+                }
+                if (item.id === 'sample-2' && item.images?.[0]?.includes('photo-1541099649105-f69ad21f3246')) {
+                  return { ...item, images: ['https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=800&q=80'] };
+                }
+                if (item.id === 'sample-5' && item.images?.[0]?.includes('photo-1583496661160-fb5886a0aaaa')) {
+                  return { ...item, images: ['https://images.unsplash.com/photo-1582142407894-ec85a1260a46?auto=format&fit=crop&w=800&q=80'] };
+                }
+                return item;
+              });
+            }
           }
         } catch (e) {
           console.error('Error loading loopstyle_products from localStorage:', e);
@@ -648,11 +662,30 @@ const Scissors = (p) => (
         } catch (e) {}
       }, [outfit]);
       const [clothingAdjustments, setClothingAdjustments] = useState({
-        top: { y: 0, scale: 1.0, cropHalf: false },
-        bottom: { y: 0, scale: 1.0, cropHalf: false },
-        outerwear: { y: 0, scale: 1.0, cropHalf: false },
-        accessory: { y: 0, scale: 1.0, cropHalf: false }
+        top: { x: 0, y: 0, scale: 1.0, cropMode: 'normal' },
+        bottom: { x: 0, y: 0, scale: 1.0, cropMode: 'normal' },
+        outerwear: { x: 0, y: 0, scale: 1.0, cropMode: 'normal' },
+        accessory: { x: 0, y: 0, scale: 1.0, cropMode: 'normal' }
       });
+
+      // Size tag dynamic fit multiplier (XS: 0.94, S: 0.97, M: 1.0, L: 1.04, XL: 1.08, Freesize: 1.0)
+      const getItemSizeMultiplier = (size) => {
+        const s = String(size || '').toUpperCase().trim();
+        if (s === 'XS') return 0.94;
+        if (s === 'S') return 0.97;
+        if (s === 'M') return 1.0;
+        if (s === 'L') return 1.04;
+        if (s === 'XL') return 1.08;
+        if (s === 'XXL') return 1.12;
+        return 1.0;
+      };
+
+      // Detect whether bottom item is a skirt
+      const isSkirtItem = (item) => {
+        if (!item) return false;
+        const str = `${item.category || ''} ${item.title || ''}`.toLowerCase();
+        return str.includes('váy') || str.includes('skirt') || str.includes('đầm');
+      };
       const [activeAdjustSlot, setActiveAdjustSlot] = useState('top');
       const [blendModeMultiply, setBlendModeMultiply] = useState(true);
 
@@ -761,7 +794,7 @@ const Scissors = (p) => (
         swapWish: '',
         lockerId: 'loc-1',
         description: '',
-        imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'
+        imageUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'
       });
 
       // Multi-step Consignment State
@@ -956,24 +989,36 @@ const Scissors = (p) => (
         showToast('Đã tháo món đồ khỏi avatar.');
       };
 
-      const adjustClothing = (slot, deltaY, deltaScale) => {
+      const adjustClothing = (slot, deltaX, deltaY, deltaScale) => {
         setClothingAdjustments((prev) => {
-          const current = prev[slot] || { y: 0, scale: 1.0, cropHalf: false };
-          const newY = Math.max(-40, Math.min(40, current.y + deltaY));
-          const newScale = Math.max(0.65, Math.min(1.45, parseFloat((current.scale + deltaScale).toFixed(2))));
+          const current = prev[slot] || { x: 0, y: 0, scale: 1.0, cropMode: 'normal' };
+          const newX = Math.max(-30, Math.min(30, (current.x || 0) + deltaX));
+          const newY = Math.max(-40, Math.min(40, (current.y || 0) + deltaY));
+          const newScale = Math.max(0.65, Math.min(1.45, parseFloat(((current.scale || 1.0) + deltaScale).toFixed(2))));
           return {
             ...prev,
-            [slot]: { ...current, y: newY, scale: newScale }
+            [slot]: { ...current, x: newX, y: newY, scale: newScale }
+          };
+        });
+      };
+
+      const setCropMode = (slot, mode) => {
+        setClothingAdjustments((prev) => {
+          const current = prev[slot] || { x: 0, y: 0, scale: 1.0, cropMode: 'normal' };
+          return {
+            ...prev,
+            [slot]: { ...current, cropMode: mode }
           };
         });
       };
 
       const toggleCropHalf = (slot) => {
         setClothingAdjustments((prev) => {
-          const current = prev[slot] || { y: 0, scale: 1.0, cropHalf: false };
+          const current = prev[slot] || { x: 0, y: 0, scale: 1.0, cropMode: 'normal' };
+          const nextMode = current.cropMode === 'half' ? 'normal' : 'half';
           return {
             ...prev,
-            [slot]: { ...current, cropHalf: !current.cropHalf }
+            [slot]: { ...current, cropMode: nextMode }
           };
         });
       };
@@ -981,7 +1026,7 @@ const Scissors = (p) => (
       const resetAdjustment = (slot) => {
         setClothingAdjustments((prev) => ({
           ...prev,
-          [slot]: { y: 0, scale: 1.0, cropHalf: false }
+          [slot]: { x: 0, y: 0, scale: 1.0, cropMode: 'normal' }
         }));
       };
 
@@ -1218,7 +1263,7 @@ const Scissors = (p) => (
           conditionScore: 95,
           swapable: consignForm.listingType !== 'rent' ? consignForm.swapable : false,
           swapWish: consignForm.swapWish || 'Sẵn sàng trao đổi hoặc cho thuê sự kiện',
-          images: [consignForm.imageUrl || 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'],
+          images: [consignForm.imageUrl || 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'],
           seller: {
             name: currentUser.isLoggedIn ? currentUser.name : 'Sinh viên FTU',
             batch: currentUser.isLoggedIn ? currentUser.batch : 'K61 FTU Hanoi',
@@ -2130,131 +2175,176 @@ const Scissors = (p) => (
                                 )}
                               </svg>
 
-                              {/* 2. ACCURATELY POSITIONED GARMENT LAYERS (SCALES IN LOCKSTEP WITH MANNEQUIN) */}
+                              {/* 2. ANATOMICALLY FIT GARMENT LAYERS WITH DYNAMIC BODY & SIZE SCALING */}
 
-                              {/* LAYER A: BOTTOMS (Quần/Váy) - Mapped from Waist to Ankles */}
-                              {outfit.bottom && (
-                                <div
-                                  className="absolute z-10 transition-transform duration-150 flex items-center justify-center pointer-events-none"
-                                  style={{
-                                    top: '34%',
-                                    left: '21%',
-                                    width: '58%',
-                                    height: '53%',
-                                    transformOrigin: 'top center',
-                                    transform: `translateY(${clothingAdjustments.bottom?.y || 0}px) scale(${clothingAdjustments.bottom?.scale || 1.0})`
-                                  }}
-                                >
-                                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
-                                    <img
-                                      src={outfit.bottom.images?.[0] || outfit.bottom.imageUrl}
-                                      alt=""
-                                      className={`transition-all duration-200 select-none ${
-                                        clothingAdjustments.bottom?.cropHalf
-                                          ? 'w-[200%] max-w-none h-full object-contain object-left'
-                                          : 'w-full h-full object-contain object-top'
-                                      }`}
-                                      style={{
-                                        mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
-                                        filter: 'contrast(1.06) saturate(1.04)'
-                                      }}
-                                    />
-                                  </div>
-                                </div>
-                              )}
+                              {/* LAYER A: BOTTOMS (Quần / Váy) - Anchored from Waistline */}
+                              {outfit.bottom && (() => {
+                                const isSkirt = isSkirtItem(outfit.bottom);
+                                const adj = clothingAdjustments.bottom || { x: 0, y: 0, scale: 1.0, cropMode: 'normal' };
+                                const sizeMul = getItemSizeMultiplier(outfit.bottom.size);
+                                const totalScale = ((adj.scale || 1.0) * sizeMul).toFixed(3);
+                                const posX = adj.x || 0;
+                                const posY = adj.y || 0;
+                                const cropMode = adj.cropMode || (adj.cropHalf ? 'half' : 'normal');
 
-                              {/* LAYER B: TOPS (Áo sơ mi/Hoodie/Áo thun) - Shoulders to Hips, Overlaps Bottoms */}
-                              {outfit.top && (
-                                <div
-                                  className="absolute z-20 transition-transform duration-150 flex items-center justify-center pointer-events-none"
-                                  style={{
-                                    top: '17%',
-                                    left: '18%',
-                                    width: '64%',
-                                    height: '26%',
-                                    transformOrigin: 'top center',
-                                    transform: `translateY(${clothingAdjustments.top?.y || 0}px) scale(${clothingAdjustments.top?.scale || 1.0})`
-                                  }}
-                                >
-                                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
-                                    <img
-                                      src={outfit.top.images?.[0] || outfit.top.imageUrl}
-                                      alt=""
-                                      className={`transition-all duration-200 select-none ${
-                                        clothingAdjustments.top?.cropHalf
-                                          ? 'w-[200%] max-w-none h-full object-contain object-left'
-                                          : 'w-full h-full object-contain object-top'
-                                      }`}
-                                      style={{
-                                        mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
-                                        filter: 'contrast(1.06) saturate(1.04)'
-                                      }}
-                                    />
+                                return (
+                                  <div
+                                    className="absolute z-10 transition-transform duration-150 flex items-center justify-center pointer-events-none"
+                                    style={{
+                                      top: '34%',
+                                      left: isSkirt ? '21%' : '20%',
+                                      width: isSkirt ? '58%' : '60%',
+                                      height: isSkirt ? '25%' : '54%',
+                                      transformOrigin: 'top center',
+                                      transform: `translate(${posX}px, ${posY}px) scale(${totalScale})`
+                                    }}
+                                  >
+                                    <div className="relative w-full h-full overflow-hidden flex items-center justify-center rounded-b-2xl">
+                                      <img
+                                        src={outfit.bottom.images?.[0] || outfit.bottom.imageUrl}
+                                        alt=""
+                                        className={`transition-all duration-200 select-none ${
+                                          cropMode === 'half'
+                                            ? 'w-[200%] max-w-none h-full object-contain object-left'
+                                            : cropMode === 'focus'
+                                            ? 'w-[135%] max-w-none h-[135%] object-contain object-top scale-125'
+                                            : 'w-full h-full object-contain object-top'
+                                        }`}
+                                        style={{
+                                          mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
+                                          filter: 'contrast(1.06) saturate(1.04) brightness(1.01)'
+                                        }}
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                );
+                              })()}
 
-                              {/* LAYER C: OUTERWEAR (Áo khoác/Blazer) - Layered OVER Tops */}
-                              {outfit.outerwear && (
-                                <div
-                                  className="absolute z-30 transition-transform duration-150 flex items-center justify-center pointer-events-none"
-                                  style={{
-                                    top: '16%',
-                                    left: '14%',
-                                    width: '72%',
-                                    height: '31%',
-                                    transformOrigin: 'top center',
-                                    transform: `translateY(${clothingAdjustments.outerwear?.y || 0}px) scale(${clothingAdjustments.outerwear?.scale || 1.0})`
-                                  }}
-                                >
-                                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
-                                    <img
-                                      src={outfit.outerwear.images?.[0] || outfit.outerwear.imageUrl}
-                                      alt=""
-                                      className={`transition-all duration-200 select-none ${
-                                        clothingAdjustments.outerwear?.cropHalf
-                                          ? 'w-[200%] max-w-none h-full object-contain object-left'
-                                          : 'w-full h-full object-contain object-top'
-                                      }`}
-                                      style={{
-                                        mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
-                                        filter: 'contrast(1.06) saturate(1.04)'
-                                      }}
-                                    />
-                                  </div>
-                                </div>
-                              )}
+                              {/* LAYER B: TOPS (Áo Hoodie / Sơ mi / Thun) - Shoulder to Waist Torso */}
+                              {outfit.top && (() => {
+                                const adj = clothingAdjustments.top || { x: 0, y: 0, scale: 1.0, cropMode: 'normal' };
+                                const sizeMul = getItemSizeMultiplier(outfit.top.size);
+                                const totalScale = ((adj.scale || 1.0) * sizeMul).toFixed(3);
+                                const posX = adj.x || 0;
+                                const posY = adj.y || 0;
+                                const cropMode = adj.cropMode || (adj.cropHalf ? 'half' : 'normal');
 
-                              {/* LAYER D: ACCESSORIES (Túi / Balo) - Draped Beside Model */}
-                              {outfit.accessory && (
-                                <div
-                                  className="absolute z-40 transition-transform duration-150 flex items-center justify-center pointer-events-none"
-                                  style={{
-                                    top: '40%',
-                                    left: '4%',
-                                    width: '30%',
-                                    height: '26%',
-                                    transformOrigin: 'center center',
-                                    transform: `translateY(${clothingAdjustments.accessory?.y || 0}px) scale(${clothingAdjustments.accessory?.scale || 1.0})`
-                                  }}
-                                >
-                                  <div className="relative w-full h-full overflow-hidden flex items-center justify-center">
-                                    <img
-                                      src={outfit.accessory.images?.[0] || outfit.accessory.imageUrl}
-                                      alt=""
-                                      className={`transition-all duration-200 select-none ${
-                                        clothingAdjustments.accessory?.cropHalf
-                                          ? 'w-[200%] max-w-none h-full object-contain object-left'
-                                          : 'w-full h-full object-contain object-center'
-                                      }`}
-                                      style={{
-                                        mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
-                                        filter: 'contrast(1.06) saturate(1.04)'
-                                      }}
-                                    />
+                                return (
+                                  <div
+                                    className="absolute z-20 transition-transform duration-150 flex items-center justify-center pointer-events-none"
+                                    style={{
+                                      top: '17%',
+                                      left: '17%',
+                                      width: '66%',
+                                      height: '26%',
+                                      transformOrigin: 'top center',
+                                      transform: `translate(${posX}px, ${posY}px) scale(${totalScale})`
+                                    }}
+                                  >
+                                    <div className="relative w-full h-full overflow-hidden flex items-center justify-center rounded-2xl">
+                                      <img
+                                        src={outfit.top.images?.[0] || outfit.top.imageUrl}
+                                        alt=""
+                                        className={`transition-all duration-200 select-none ${
+                                          cropMode === 'half'
+                                            ? 'w-[200%] max-w-none h-full object-contain object-left'
+                                            : cropMode === 'focus'
+                                            ? 'w-[135%] max-w-none h-[135%] object-contain object-center scale-125'
+                                            : 'w-full h-full object-contain object-top'
+                                        }`}
+                                        style={{
+                                          mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
+                                          filter: 'contrast(1.06) saturate(1.04) brightness(1.01)'
+                                        }}
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                );
+                              })()}
+
+                              {/* LAYER C: OUTERWEAR (Áo khoác / Blazer / Bomber) - Broader Shoulders, Layered OVER Tops */}
+                              {outfit.outerwear && (() => {
+                                const adj = clothingAdjustments.outerwear || { x: 0, y: 0, scale: 1.0, cropMode: 'normal' };
+                                const sizeMul = getItemSizeMultiplier(outfit.outerwear.size);
+                                const totalScale = ((adj.scale || 1.0) * sizeMul).toFixed(3);
+                                const posX = adj.x || 0;
+                                const posY = adj.y || 0;
+                                const cropMode = adj.cropMode || (adj.cropHalf ? 'half' : 'normal');
+
+                                return (
+                                  <div
+                                    className="absolute z-30 transition-transform duration-150 flex items-center justify-center pointer-events-none"
+                                    style={{
+                                      top: '15%',
+                                      left: '13%',
+                                      width: '74%',
+                                      height: '32%',
+                                      transformOrigin: 'top center',
+                                      transform: `translate(${posX}px, ${posY}px) scale(${totalScale})`
+                                    }}
+                                  >
+                                    <div className="relative w-full h-full overflow-hidden flex items-center justify-center rounded-2xl">
+                                      <img
+                                        src={outfit.outerwear.images?.[0] || outfit.outerwear.imageUrl}
+                                        alt=""
+                                        className={`transition-all duration-200 select-none ${
+                                          cropMode === 'half'
+                                            ? 'w-[200%] max-w-none h-full object-contain object-left'
+                                            : cropMode === 'focus'
+                                            ? 'w-[135%] max-w-none h-[135%] object-contain object-center scale-125'
+                                            : 'w-full h-full object-contain object-top'
+                                        }`}
+                                        style={{
+                                          mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
+                                          filter: 'contrast(1.06) saturate(1.04) brightness(1.01)'
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+
+                              {/* LAYER D: ACCESSORIES (Túi Tote / Balo) - Draped Beside Model */}
+                              {outfit.accessory && (() => {
+                                const adj = clothingAdjustments.accessory || { x: 0, y: 0, scale: 1.0, cropMode: 'normal' };
+                                const sizeMul = getItemSizeMultiplier(outfit.accessory.size);
+                                const totalScale = ((adj.scale || 1.0) * sizeMul).toFixed(3);
+                                const posX = adj.x || 0;
+                                const posY = adj.y || 0;
+                                const cropMode = adj.cropMode || (adj.cropHalf ? 'half' : 'normal');
+
+                                return (
+                                  <div
+                                    className="absolute z-40 transition-transform duration-150 flex items-center justify-center pointer-events-none"
+                                    style={{
+                                      top: '39%',
+                                      left: '3%',
+                                      width: '30%',
+                                      height: '28%',
+                                      transformOrigin: 'center center',
+                                      transform: `translate(${posX}px, ${posY}px) scale(${totalScale})`
+                                    }}
+                                  >
+                                    <div className="relative w-full h-full overflow-hidden flex items-center justify-center rounded-xl">
+                                      <img
+                                        src={outfit.accessory.images?.[0] || outfit.accessory.imageUrl}
+                                        alt=""
+                                        className={`transition-all duration-200 select-none ${
+                                          cropMode === 'half'
+                                            ? 'w-[200%] max-w-none h-full object-contain object-left'
+                                            : cropMode === 'focus'
+                                            ? 'w-[130%] max-w-none h-[130%] object-contain object-center scale-120'
+                                            : 'w-full h-full object-contain object-center'
+                                        }`}
+                                        style={{
+                                          mixBlendMode: blendModeMultiply ? 'multiply' : 'normal',
+                                          filter: 'contrast(1.06) saturate(1.04) brightness(1.01)'
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              })()}
                             </div>
                           </div>
                         );
@@ -2315,24 +2405,56 @@ const Scissors = (p) => (
                         {/* Adjustment Controls for the Active Slot */}
                         {outfit[activeAdjustSlot] ? (
                           <div className="space-y-2">
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              {/* Vertical Nudge */}
-                              <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
-                                <span className="text-[10px] font-bold text-stone-600">Dịch Y:</span>
-                                <div className="flex items-center gap-1">
+                            {/* Size Info Badge */}
+                            <div className="flex items-center justify-between text-[10px] font-semibold text-[#5F7A57] px-1">
+                              <span>Món đồ: <strong className="text-[#283F2E]">{outfit[activeAdjustSlot].title}</strong></span>
+                              <span className="bg-white/80 px-2 py-0.5 rounded-md border border-[#283F2E]/15 text-[#283F2E] font-black">
+                                Tag Size: {outfit[activeAdjustSlot].size || 'Freesize'} (x{getItemSizeMultiplier(outfit[activeAdjustSlot].size)})
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-1.5 text-xs">
+                              {/* Horizontal Nudge (Dịch X) */}
+                              <div className="flex items-center justify-between bg-white px-2 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
+                                <span className="text-[10px] font-bold text-stone-600">Dịch X:</span>
+                                <div className="flex items-center gap-0.5">
                                   <button
-                                    onClick={() => adjustClothing(activeAdjustSlot, -3, 0)}
-                                    className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
+                                    onClick={() => adjustClothing(activeAdjustSlot, -3, 0, 0)}
+                                    className="w-5 h-5 rounded-md bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center text-xs"
+                                    title="Dịch sang trái"
+                                  >
+                                    ◄
+                                  </button>
+                                  <span className="font-mono text-[9px] font-black w-5 text-center text-[#283F2E]">
+                                    {clothingAdjustments[activeAdjustSlot]?.x || 0}
+                                  </span>
+                                  <button
+                                    onClick={() => adjustClothing(activeAdjustSlot, 3, 0, 0)}
+                                    className="w-5 h-5 rounded-md bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center text-xs"
+                                    title="Dịch sang phải"
+                                  >
+                                    ►
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Vertical Nudge (Dịch Y) */}
+                              <div className="flex items-center justify-between bg-white px-2 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
+                                <span className="text-[10px] font-bold text-stone-600">Dịch Y:</span>
+                                <div className="flex items-center gap-0.5">
+                                  <button
+                                    onClick={() => adjustClothing(activeAdjustSlot, 0, -3, 0)}
+                                    className="w-5 h-5 rounded-md bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center text-xs"
                                     title="Dịch lên trên"
                                   >
                                     ▲
                                   </button>
-                                  <span className="font-mono text-[10px] font-black w-6 text-center text-[#283F2E]">
+                                  <span className="font-mono text-[9px] font-black w-5 text-center text-[#283F2E]">
                                     {clothingAdjustments[activeAdjustSlot]?.y || 0}
                                   </span>
                                   <button
-                                    onClick={() => adjustClothing(activeAdjustSlot, 3, 0)}
-                                    className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
+                                    onClick={() => adjustClothing(activeAdjustSlot, 0, 3, 0)}
+                                    className="w-5 h-5 rounded-md bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center text-xs"
                                     title="Dịch xuống dưới"
                                   >
                                     ▼
@@ -2341,30 +2463,30 @@ const Scissors = (p) => (
                               </div>
 
                               {/* Scale Size */}
-                              <div className="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
+                              <div className="flex items-center justify-between bg-white px-2 py-1.5 rounded-xl border border-stone-200 shadow-2xs">
                                 <span className="text-[10px] font-bold text-stone-600">Cỡ:</span>
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-0.5">
                                   <button
-                                    onClick={() => adjustClothing(activeAdjustSlot, 0, -0.05)}
-                                    className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
+                                    onClick={() => adjustClothing(activeAdjustSlot, 0, 0, -0.05)}
+                                    className="w-5 h-5 rounded-md bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center text-xs"
                                     title="Thu nhỏ"
                                   >
                                     -
                                   </button>
-                                  <span className="font-mono text-[10px] font-black w-8 text-center text-[#283F2E]">
+                                  <span className="font-mono text-[9px] font-black w-7 text-center text-[#283F2E]">
                                     {Math.round((clothingAdjustments[activeAdjustSlot]?.scale || 1.0) * 100)}%
                                   </span>
                                   <button
-                                    onClick={() => adjustClothing(activeAdjustSlot, 0, 0.05)}
-                                    className="w-6 h-6 rounded-lg bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center transition-colors text-xs"
+                                    onClick={() => adjustClothing(activeAdjustSlot, 0, 0, 0.05)}
+                                    className="w-5 h-5 rounded-md bg-stone-100 hover:bg-[#EFE3B8] text-[#283F2E] font-black flex items-center justify-center text-xs"
                                     title="Phóng to"
                                   >
                                     +
                                   </button>
                                   <button
                                     onClick={() => resetAdjustment(activeAdjustSlot)}
-                                    className="ml-1 text-[10px] text-stone-400 hover:text-stone-700 font-bold"
-                                    title="Đặt lại"
+                                    className="ml-0.5 text-[10px] text-stone-400 hover:text-stone-700 font-bold"
+                                    title="Đặt lại vị trí"
                                   >
                                     ↺
                                   </button>
@@ -2372,19 +2494,33 @@ const Scissors = (p) => (
                               </div>
                             </div>
 
-                            {/* Front-only crop toggle button */}
-                            <button
-                              onClick={() => toggleCropHalf(activeAdjustSlot)}
-                              className={`w-full py-1.5 px-3 rounded-xl border text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all ${
-                                clothingAdjustments[activeAdjustSlot]?.cropHalf
-                                  ? 'bg-[#283F2E] text-white border-[#283F2E] shadow-2xs'
-                                  : 'bg-white hover:bg-[#EFE3B8]/60 text-stone-700 border-stone-200 shadow-2xs'
-                              }`}
-                              title="Cắt lấy nửa bên trái của ảnh sản phẩm (khi ảnh chụp ghép cả mặt trước và sau)"
-                            >
-                              <Scissors className="w-3.5 h-3.5 text-[#C9A24A]" />
-                              <span>{clothingAdjustments[activeAdjustSlot]?.cropHalf ? 'Đang bật cắt nửa ảnh (Mặt trước)' : 'Cắt nửa ảnh (Dành cho ảnh ghép 2 mặt trước-sau)'}</span>
-                            </button>
+                            {/* Framing & Crop Focus Selector */}
+                            <div className="flex items-center gap-1.5 pt-0.5">
+                              {[
+                                { mode: 'normal', label: 'Toàn bộ', icon: '🖼️', title: 'Hiển thị tỷ lệ chuẩn toàn bộ ảnh' },
+                                { mode: 'focus', label: 'Focus trọng tâm', icon: '🔍', title: 'Phóng to 130% trọng tâm để loại bỏ phụ kiện rìa ảnh như hoa, mũ, nền thừa' },
+                                { mode: 'half', label: 'Cắt 1/2 mặt trước', icon: '✂️', title: 'Cắt lấy nửa trái mặt trước đối với ảnh ghép 2 mặt trước sau' }
+                              ].map((btn) => {
+                                const currentMode = clothingAdjustments[activeAdjustSlot]?.cropMode || (clothingAdjustments[activeAdjustSlot]?.cropHalf ? 'half' : 'normal');
+                                const isSelected = currentMode === btn.mode;
+                                return (
+                                  <button
+                                    key={btn.mode}
+                                    type="button"
+                                    onClick={() => setCropMode(activeAdjustSlot, btn.mode)}
+                                    title={btn.title}
+                                    className={`flex-1 py-1 px-1.5 rounded-xl border text-[9px] font-bold flex items-center justify-center gap-1 transition-all ${
+                                      isSelected
+                                        ? 'bg-[#283F2E] text-white border-[#283F2E] shadow-2xs'
+                                        : 'bg-white hover:bg-[#EFE3B8]/60 text-stone-600 border-stone-200 shadow-2xs'
+                                    }`}
+                                  >
+                                    <span>{btn.icon}</span>
+                                    <span>{btn.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
                           </div>
                         ) : (
                           <div className="text-[10px] text-stone-500 italic py-0.5 text-center">
@@ -2420,9 +2556,7 @@ const Scissors = (p) => (
                               <div className="truncate">
                                 <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider flex items-center gap-1">
                                   <span>Áo (Top)</span>
-                                  {clothingAdjustments.top?.cropHalf && (
-                                    <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span>
-                                  )}
+                                  {(clothingAdjustments.top?.cropMode === 'focus' ? <span className="text-[8px] bg-[#C9A24A] text-white px-1 rounded-sm">Focus</span> : clothingAdjustments.top?.cropMode === 'half' ? <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span> : null)}
                                 </div>
                                 <div className="text-[11px] font-bold text-[#2B2D2F] truncate">{outfit.top.title}</div>
                                 <div className="text-[10px] font-black text-[#283F2E]">{formatPrice(outfit.top.price)}</div>
@@ -2459,9 +2593,7 @@ const Scissors = (p) => (
                               <div className="truncate">
                                 <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider flex items-center gap-1">
                                   <span>Quần/Váy</span>
-                                  {clothingAdjustments.bottom?.cropHalf && (
-                                    <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span>
-                                  )}
+                                  {(clothingAdjustments.bottom?.cropMode === 'focus' ? <span className="text-[8px] bg-[#C9A24A] text-white px-1 rounded-sm">Focus</span> : clothingAdjustments.bottom?.cropMode === 'half' ? <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span> : null)}
                                 </div>
                                 <div className="text-[11px] font-bold text-[#2B2D2F] truncate">{outfit.bottom.title}</div>
                                 <div className="text-[10px] font-black text-[#283F2E]">{formatPrice(outfit.bottom.price)}</div>
@@ -2498,9 +2630,7 @@ const Scissors = (p) => (
                               <div className="truncate">
                                 <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider flex items-center gap-1">
                                   <span>Áo khoác</span>
-                                  {clothingAdjustments.outerwear?.cropHalf && (
-                                    <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span>
-                                  )}
+                                  {(clothingAdjustments.outerwear?.cropMode === 'focus' ? <span className="text-[8px] bg-[#C9A24A] text-white px-1 rounded-sm">Focus</span> : clothingAdjustments.outerwear?.cropMode === 'half' ? <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span> : null)}
                                 </div>
                                 <div className="text-[11px] font-bold text-[#2B2D2F] truncate">{outfit.outerwear.title}</div>
                                 <div className="text-[10px] font-black text-[#283F2E]">{formatPrice(outfit.outerwear.price)}</div>
@@ -2537,9 +2667,7 @@ const Scissors = (p) => (
                               <div className="truncate">
                                 <div className="text-[9px] font-black text-[#5F7A57] uppercase tracking-wider flex items-center gap-1">
                                   <span>Phụ kiện</span>
-                                  {clothingAdjustments.accessory?.cropHalf && (
-                                    <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span>
-                                  )}
+                                  {(clothingAdjustments.accessory?.cropMode === 'focus' ? <span className="text-[8px] bg-[#C9A24A] text-white px-1 rounded-sm">Focus</span> : clothingAdjustments.accessory?.cropMode === 'half' ? <span className="text-[8px] bg-[#283F2E] text-white px-1 rounded-sm">1/2</span> : null)}
                                 </div>
                                 <div className="text-[11px] font-bold text-[#2B2D2F] truncate">{outfit.accessory.title}</div>
                                 <div className="text-[10px] font-black text-[#283F2E]">{formatPrice(outfit.accessory.price)}</div>
@@ -3563,7 +3691,7 @@ const Scissors = (p) => (
                               swapWish: '',
                               lockerId: 'loc-1',
                               description: '',
-                              imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80'
+                              imageUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=800&q=80'
                             });
                             setConsignStep(1);
                           }}
